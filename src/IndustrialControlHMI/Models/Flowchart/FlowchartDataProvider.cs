@@ -286,8 +286,8 @@ public static class FlowchartDataProvider
         var MBR膜池_上 = new Point(855, 420);
         
         // 公共绕行路径：从除臭设备直接向右 → 再向下到目标
-        // 水平绕行Y坐标（在设备下方，避免斜线）
-        double 水平绕行Y = 80;  // 从Y=50向下移动到Y=80
+        // 水平绕行Y坐标（在设备下方，对齐到网格）
+        double 水平绕行Y = 50;  // 保持与除臭设备右边点同一高度，对齐到网格
         
         // 除臭设备 → 缺氧池（水平向右，然后垂直向下）
         AddOrtho(除臭设备_右, new Point(缺氧池_上.X, 水平绕行Y), FlowLineType.Deodorization, true);
@@ -307,9 +307,9 @@ public static class FlowchartDataProvider
         // 自来水补水(左)的下点 → 电磁阀(左)的上点：垂直向下
         AddOrtho(自来水补水左_下, 电磁阀左_上, FlowLineType.WaterSupply);
         
-        // 电磁阀(左)的下点 → 调节池上点：垂直向下 → 水平向右 → 垂直向上（门字形）
-        AddOrtho3(电磁阀左_下, new Point(90, 400), new Point(调节池_上.X, 400), FlowLineType.WaterSupply);
-        AddOrtho(new Point(调节池_上.X, 400), 调节池_上, FlowLineType.WaterSupply);
+        // 电磁阀(左)的下点 → 调节池上点：水平向右 → 垂直向上（简洁的L形）
+        AddOrtho(电磁阀左_下, new Point(调节池_上.X, 370), FlowLineType.WaterSupply);
+        AddOrtho(new Point(调节池_上.X, 370), 调节池_上, FlowLineType.WaterSupply);
         
         // 定义右侧设备连接点（中间水池补水）
         var 自来水补水右_下 = new Point(1150, 230);  // 自来水补水(右)的下点
@@ -320,9 +320,9 @@ public static class FlowchartDataProvider
         // 自来水补水(右)的下点 → 电磁阀(右)的上点：垂直向下
         AddOrtho(自来水补水右_下, 电磁阀右_上, FlowLineType.WaterSupply);
         
-        // 电磁阀(右)的下点 → 中间水池上点：垂直向下 → 水平向右 → 垂直向上（门字形）
-        AddOrtho3(电磁阀右_下, new Point(1150, 400), new Point(中间水池_上.X, 400), FlowLineType.WaterSupply);
-        AddOrtho(new Point(中间水池_上.X, 400), 中间水池_上, FlowLineType.WaterSupply);
+        // 电磁阀(右)的下点 → 中间水池上点：水平向右 → 垂直向上（简洁的L形）
+        AddOrtho(电磁阀右_下, new Point(中间水池_上.X, 370), FlowLineType.WaterSupply);
+        AddOrtho(new Point(中间水池_上.X, 370), 中间水池_上, FlowLineType.WaterSupply);
         
         // ========== 主工艺流程线（灰色实线）==========
         // 格栅机(右) → 调节池(左)：水平直线（两点在同一水平线 Y=470）
