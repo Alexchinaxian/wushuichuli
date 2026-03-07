@@ -81,6 +81,9 @@ desktop.ini
 **/tests/*/bin/
 **/tests/*/obj/
 
+## Git钩子示例文件
+.githooks/*.example
+
 ## 配置文件（可根据需要调整）
 # !config/IndustrialControlHMI/*.json  # 取消注释以包含配置文件
 # !config/IndustrialControlHMI/*.md    # 取消注释以包含配置说明
