@@ -1,0 +1,126 @@
+{
+  "version": "1.0",
+  "description": "工业控制HMI接线配置",
+  "gridSize": 10.0,
+  "defaultLineThickness": 2.0,
+  "defaultArrowSize": 8.0,
+  
+  "connectionPoints": {
+    "grid_chamber": {
+      "output_right": { "x": 80, "y": 0 },
+      "input_left": { "x": -80, "y": 0 }
+    },
+    "adjustment_tank": {
+      "input_left": { "x": -80, "y": 0 },
+      "output_right": { "x": 80, "y": 0 },
+      "input_top": { "x": 0, "y": -60 },
+      "output_bottom": { "x": 0, "y": 60 }
+    },
+    "euro_filter": {
+      "input_top": { "x": 0, "y": -60 },
+      "output_bottom": { "x": 0, "y": 60 }
+    },
+    "anaerobic_tank": {
+      "input_left": { "x": -80, "y": 0 },
+      "output_right": { "x": 80, "y": 0 }
+    },
+    "aeration_tank": {
+      "input_left": { "x": -80, "y": 0 },
+      "output_right": { "x": 80, "y": 0 }
+    },
+    "MBR_tank": {
+      "input_left": { "x": -80, "y": 0 },
+      "output_right": { "x": 80, "y": 0 },
+      "input_top": { "x": 0, "y": -60 },
+      "output_bottom": { "x": 0, "y": 60 }
+    },
+    "intermediate_water_tank": {
+      "input_left": { "x": -80, "y": 0 },
+      "output_right": { "x": 80, "y": 0 },
+      "input_top": { "x": 0, "y": -60 }
+    },
+    "tap_water_unit": {
+      "output_bottom": { "x": 0, "y": 60 }
+    }
+  },
+  
+  "wiringRules": [
+    {
+      "name": "main_process_horizontal",
+      "description": "主流程水平连接",
+      "preferredStyle": "orthogonal",
+      "turnRadius": 0,
+      "avoidCrossing": true,
+      "gridAlignment": true
+    },
+    {
+      "name": "water_supply_vertical",
+      "description": "补水垂直连接",
+      "preferredStyle": "direct",
+      "turnRadius": 0,
+      "avoidCrossing": false,
+      "gridAlignment": true
+    },
+    {
+      "name": "reflux_diagonal",
+      "description": "回流斜向连接",
+      "preferredStyle": "direct",
+      "turnRadius": 5,
+      "avoidCrossing": true,
+      "gridAlignment": false
+    },
+    {
+      "name": "backwash_dashed",
+      "description": "反洗虚线连接",
+      "preferredStyle": "orthogonal",
+      "turnRadius": 0,
+      "avoidCrossing": true,
+      "gridAlignment": true,
+      "lineStyle": "dashed"
+    }
+  ],
+  
+  "visualSettings": {
+    "lineColors": {
+      "MainProcess": "#808080",
+      "WaterSupply": "#4CAF50",
+      "Dosing": "#795548",
+      "Reflux": "#2196F3",
+      "Backwash": "#2196F3",
+      "Aeration": "#FFC107",
+      "Deodorization": "#795548"
+    },
+    "lineDashStyles": {
+      "solid": [],
+      "dashed": [4, 2],
+      "dotted": [1, 2]
+    },
+    "arrowVisibility": {
+      "horizontalThreshold": 5.0,
+      "verticalThreshold": 5.0,
+      "minSegmentLength": 10.0
+    },
+    "highlightSettings": {
+      "selectedColor": "#FF5722",
+      "hoverColor": "#FF9800",
+      "relatedColor": "#9C27B0",
+      "highlightThickness": 3.0
+    }
+  },
+  
+  "performanceSettings": {
+    "enableCaching": true,
+    "cacheDuration": 5000,
+    "maxLinesToOptimize": 100,
+    "optimizationBatchSize": 10,
+    "enableLazyLoading": true
+  },
+  
+  "debugSettings": {
+    "showConnectionPoints": false,
+    "showGrid": false,
+    "showBoundingBoxes": false,
+    "logPathGeneration": false,
+    "logConflictDetection": false
+  }
+}

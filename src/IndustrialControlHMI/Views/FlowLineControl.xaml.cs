@@ -207,7 +207,7 @@ namespace IndustrialControlHMI.Views
                 var deltaY = Math.Abs(end.Y - start.Y);
                 
                 // 如果最后一段是水平线（X变化远大于Y变化）
-                if (deltaX > 5.0 && deltaY < 5.0)
+                if (!WiringConfigLoader.ShouldShowArrow(deltaX, deltaY))
                 {
                     ArrowPath.Visibility = Visibility.Collapsed;
                     return;
@@ -220,7 +220,7 @@ namespace IndustrialControlHMI.Views
                 var deltaY = Math.Abs(FlowLineModel.End.Y - FlowLineModel.Start.Y);
                 
                 // 如果是水平线（X变化远大于Y变化）
-                if (deltaX > 5.0 && deltaY < 5.0)
+                if (!WiringConfigLoader.ShouldShowArrow(deltaX, deltaY))
                 {
                     ArrowPath.Visibility = Visibility.Collapsed;
                     return;

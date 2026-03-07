@@ -200,17 +200,43 @@ public class FlowLineModel : INotifyPropertyChanged
     /// <summary>
     /// 获取线条的颜色（根据类型）
     /// </summary>
-    public Color LineColor => Type switch
+    public Color LineColor
     {
-        FlowLineType.MainProcess => Color.FromRgb(128, 128, 128),  // 灰色
-        FlowLineType.WaterSupply => Color.FromRgb(39, 174, 96),    // 绿色
-        FlowLineType.Dosing => Color.FromRgb(139, 69, 19),         // 棕色
-        FlowLineType.Reflux => Color.FromRgb(52, 152, 219),        // 蓝色
-        FlowLineType.Backwash => Color.FromRgb(52, 152, 219),      // 蓝色
-        FlowLineType.Aeration => Color.FromRgb(255, 204, 0),       // 黄色
-        FlowLineType.Deodorization => Color.FromRgb(139, 69, 19),  // 棕色（与加药相同）
-        _ => Colors.Blue
-    };
+        get
+        {
+            // 从配置系统获取颜色
+            var colorHex = WiringConfigLoader.GetLineColor(Type);
+            
+            try
+            {
+                // 将十六进制颜色转换为Color
+                if (colorHex.StartsWith("#") && colorHex.Length == 7)
+                {
+                    var r = Convert.ToByte(colorHex.Substring(1, 2), 16);
+                    var g = Convert.ToByte(colorHex.Substring(3, 2), 16);
+                    var b = Convert.ToByte(colorHex.Substring(5, 2), 16);
+                    return Color.FromRgb(r, g, b);
+                }
+            }
+            catch
+            {
+                // 如果配置解析失败，使用默认颜色
+            }
+            
+            // 默认颜色（兼容旧代码）
+            return Type switch
+            {
+                FlowLineType.MainProcess => Color.FromRgb(128, 128, 128),  // 灰色
+                FlowLineType.WaterSupply => Color.FromRgb(39, 174, 96),    // 绿色
+                FlowLineType.Dosing => Color.FromRgb(139, 69, 19),         // 棕色
+                FlowLineType.Reflux => Color.FromRgb(52, 152, 219),        // 蓝色
+                FlowLineType.Backwash => Color.FromRgb(52, 152, 219),      // 蓝色
+                FlowLineType.Aeration => Color.FromRgb(255, 204, 0),       // 黄色
+                FlowLineType.Deodorization => Color.FromRgb(139, 69, 19),  // 棕色（与加药相同）
+                _ => Colors.Blue
+            };
+        }
+    }
     
     /// <summary>
     /// 获取线条的虚线样式（如果是虚线）
