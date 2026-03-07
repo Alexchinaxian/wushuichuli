@@ -198,6 +198,18 @@
                 </Setter>
                 
                 <Style.Triggers>
+                    <!-- 自来水补水框：禁用所有状态变化，保持静态样式 -->
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding ShowStatusIndicator}" Value="False"/>
+                        </MultiDataTrigger.Conditions>
+                        <Setter Property="BorderBrush" Value="{StaticResource NormalBorderBrush}"/>
+                        <Setter Property="Background" Value="{StaticResource NormalGradient}"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="Opacity" Value="1"/>
+                        <Setter Property="Effect" Value="{x:Null}"/>
+                    </MultiDataTrigger>
+                    
                     <!-- 悬停效果 -->
                     <DataTrigger Binding="{Binding IsHovered}" Value="True">
                         <DataTrigger.EnterActions>
@@ -276,7 +288,7 @@
         </Border.Style>
         
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <!-- 状态指示灯 - 自来水补水框不显示 -->
+            <!-- 状态指示灯 - 根据ShowStatusIndicator属性显示 -->
             <Ellipse x:Name="StatusIndicator"
                      Width="10"
                      Height="10"
@@ -290,7 +302,7 @@
                     <Style TargetType="Ellipse">
                         <Style.Triggers>
                             <!-- 自来水补水框隐藏状态指示灯 -->
-                            <DataTrigger Binding="{Binding Title}" Value="自来水补水">
+                            <DataTrigger Binding="{Binding ShowStatusIndicator}" Value="False">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </DataTrigger>
                         </Style.Triggers>
@@ -336,7 +348,7 @@
                     <Style TargetType="TextBlock">
                         <Style.Triggers>
                             <!-- 自来水补水框隐藏状态文本 -->
-                            <DataTrigger Binding="{Binding Title}" Value="自来水补水">
+                            <DataTrigger Binding="{Binding ShowStatusIndicator}" Value="False">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="Running">

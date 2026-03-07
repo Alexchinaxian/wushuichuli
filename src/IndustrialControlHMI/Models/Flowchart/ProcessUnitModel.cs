@@ -47,6 +47,14 @@ public class ProcessUnitModel : INotifyPropertyChanged
     /// </summary>
     public string UnitType { get; set; } = string.Empty;
     
+    /// <summary>
+    /// 是否显示状态指示（自来水补水框不显示状态）
+    /// </summary>
+    public bool ShowStatusIndicator
+    {
+        get => UnitType != "Valve" || !Title.Contains("自来水补水");
+    }
+    
     private Point _position;
     private Size _size = new Size(140, 100);
     
