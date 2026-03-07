@@ -171,6 +171,19 @@ namespace IndustrialControlHMI.Views
                 && !double.IsInfinity(p.X) && !double.IsInfinity(p.Y);
         }
 
+        /// <summary>
+        /// 更新箭头位置和可见性
+        /// 根据连接线类型和方向决定是否显示箭头：
+        /// 1. 水平线段不显示箭头（仅作为连接标识）
+        /// 2. 垂直线段和斜线段显示箭头
+        /// 3. 直角线的最后一段如果是水平线，也不显示箭头
+        /// </summary>
+        /// <remarks>
+        /// 箭头显示规则：
+        /// - 水平线：deltaX > 5.0 且 deltaY < 5.0 时隐藏箭头
+        /// - 其他情况：正常显示箭头
+        /// 这样可以确保只有真正表示流向的线段才显示箭头
+        /// </remarks>
         private void UpdateArrowPoints()
         {
             if (ArrowPath == null) return;
