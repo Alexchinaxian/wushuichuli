@@ -184,15 +184,17 @@ namespace IndustrialControlHMI.Views
             if (!FlowLineModel.ShowArrow) return;
             
             // 检查是否为水平线段（Y方向变化很小）
+            // 对于直角线，可能有多个线段，需要检查最后一段
             if (FlowLineModel.IsOrthogonal && FlowLineModel.IntermediatePoints.Count > 0)
             {
                 // 对于直角线，检查最后一段是否为水平
                 var start = FlowLineModel.IntermediatePoints[FlowLineModel.IntermediatePoints.Count - 1];
                 var end = FlowLineModel.End;
+                var deltaX = Math.Abs(end.X - start.X);
                 var deltaY = Math.Abs(end.Y - start.Y);
                 
-                // 如果最后一段是水平线（Y变化小于1），不显示箭头
-                if (deltaY < 1.0)
+                // 如果最后一段是水平线（X变化远大于Y变化）
+                if (deltaX > 5.0 && deltaY < 5.0)
                 {
                     ArrowPath.Visibility = Visibility.Collapsed;
                     return;
@@ -201,8 +203,11 @@ namespace IndustrialControlHMI.Views
             else
             {
                 // 对于普通线，检查整体是否为水平
+                var deltaX = Math.Abs(FlowLineModel.End.X - FlowLineModel.Start.X);
                 var deltaY = Math.Abs(FlowLineModel.End.Y - FlowLineModel.Start.Y);
-                if (deltaY < 1.0)
+                
+                // 如果是水平线（X变化远大于Y变化）
+                if (deltaX > 5.0 && deltaY < 5.0)
                 {
                     ArrowPath.Visibility = Visibility.Collapsed;
                     return;
