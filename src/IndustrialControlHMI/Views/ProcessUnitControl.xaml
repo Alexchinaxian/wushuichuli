@@ -203,7 +203,7 @@
                         <MultiDataTrigger.Conditions>
                             <Condition Binding="{Binding ShowStatusIndicator}" Value="False"/>
                         </MultiDataTrigger.Conditions>
-                        <Setter Property="BorderBrush" Value="{StaticResource NormalBorderBrush}"/>
+                        <Setter Property="BorderBrush" Value="#2196F3"/>
                         <Setter Property="Background" Value="{StaticResource NormalGradient}"/>
                         <Setter Property="BorderThickness" Value="2"/>
                         <Setter Property="Opacity" Value="1"/>
