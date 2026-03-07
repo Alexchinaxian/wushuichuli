@@ -276,9 +276,27 @@
         </Border.Style>
         
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <!-- 状态指示灯 -->
-            <Ellipse x:Name="StatusIndicator" Style="{StaticResource StatusIndicatorStyle}"
-                     Fill="{Binding Status, Converter={StaticResource StatusToBrushConverter}}"/>
+            <!-- 状态指示灯 - 自来水补水框不显示 -->
+            <Ellipse x:Name="StatusIndicator"
+                     Width="10"
+                     Height="10"
+                     Margin="0,0,0,4"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Stroke="#FFFFFF"
+                     StrokeThickness="1"
+                     Fill="{Binding Status, Converter={StaticResource StatusToBrushConverter}}">
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
+                        <Style.Triggers>
+                            <!-- 自来水补水框隐藏状态指示灯 -->
+                            <DataTrigger Binding="{Binding Title}" Value="自来水补水">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
             <!-- 设备名称 - 根据状态调整颜色 -->
             <TextBlock Text="{Binding Title}"
                        FontSize="14"
@@ -307,7 +325,7 @@
                        TextWrapping="Wrap"
                        MaxWidth="130"
                        Visibility="{Binding KeyParametersText, Converter={StaticResource StringToVisibilityConverter}}"/>
-            <!-- 状态文本 - 调节池专用状态颜色 -->
+            <!-- 状态文本 - 调节池专用状态颜色，自来水补水框不显示 -->
             <TextBlock Text="{Binding StatusText}"
                        FontSize="10"
                        FontWeight="SemiBold"
@@ -317,6 +335,10 @@
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Style.Triggers>
+                            <!-- 自来水补水框隐藏状态文本 -->
+                            <DataTrigger Binding="{Binding Title}" Value="自来水补水">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="Running">
                                 <Setter Property="Foreground" Value="#0077FF"/>
                             </DataTrigger>
