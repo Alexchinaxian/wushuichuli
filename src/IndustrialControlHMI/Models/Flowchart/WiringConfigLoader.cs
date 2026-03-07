@@ -15,8 +15,8 @@ public static class WiringConfigLoader
     private static WiringConfig? _config;
     private static readonly object _lock = new object();
     private static readonly string ConfigPath = Path.Combine(
-        AppDomain.CurrentDomain.BaseDirectory, 
-        "Config", 
+        AppDomain.CurrentDomain.BaseDirectory,
+        "Config",
         "wiring_config.json"
     );
 
@@ -108,7 +108,7 @@ public static class WiringConfigLoader
     public static Point? GetConnectionPoint(string deviceId, string pointName)
     {
         var config = GetConfig();
-        
+
         if (config.ConnectionPoints.TryGetValue(deviceId, out var devicePoints))
         {
             if (devicePoints.TryGetValue(pointName, out var point))
@@ -126,7 +126,7 @@ public static class WiringConfigLoader
     public static string GetLineColor(FlowLineType lineType)
     {
         var config = GetConfig();
-        
+
         if (config.VisualSettings.LineColors.TryGetValue(lineType.ToString(), out var color))
         {
             return color;
@@ -152,7 +152,7 @@ public static class WiringConfigLoader
     public static double[] GetDashStyle(string styleName)
     {
         var config = GetConfig();
-        
+
         if (config.VisualSettings.LineDashStyles.TryGetValue(styleName, out var dashArray))
         {
             return dashArray;
@@ -163,27 +163,32 @@ public static class WiringConfigLoader
 
     /// <summary>
     /// 检查是否应该显示箭头
+    /// 修改：所有连线都显示箭头，像自来水补水和电磁阀连线那样
     /// </summary>
     public static bool ShouldShowArrow(double deltaX, double deltaY)
     {
-        var config = GetConfig();
-        var arrowSettings = config.VisualSettings.ArrowVisibility;
-        
-        // 如果是水平线（X变化远大于Y变化），不显示箭头
-        if (deltaX > arrowSettings.HorizontalThreshold && 
-            deltaY < arrowSettings.VerticalThreshold)
-        {
-            return false;
-        }
-        
-        // 如果线段太短，也不显示箭头
-        var segmentLength = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-        if (segmentLength < arrowSettings.MinSegmentLength)
-        {
-            return false;
-        }
-        
+        // 修改：所有连线都显示箭头
         return true;
+        
+        // 旧逻辑（已禁用）：
+        // var config = GetConfig();
+        // var arrowSettings = config.VisualSettings.ArrowVisibility;
+        
+        // // 如果是水平线（X变化远大于Y变化），不显示箭头
+        // if (deltaX > arrowSettings.HorizontalThreshold && 
+        //     deltaY < arrowSettings.VerticalThreshold)
+        // {
+        //     return false;
+        // }
+        
+        // // 如果线段太短，也不显示箭头
+        // var segmentLength = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+        // if (segmentLength < arrowSettings.MinSegmentLength)
+        // {
+        //     return false;
+        // }
+
+        // return true;
     }
 }
 
@@ -197,7 +202,7 @@ public class WiringConfig
     public double GridSize { get; set; } = 10.0;
     public double DefaultLineThickness { get; set; } = 2.0;
     public double DefaultArrowSize { get; set; } = 8.0;
-    
+
     public Dictionary<string, Dictionary<string, Point>> ConnectionPoints { get; set; } = new();
     public List<WiringRule> WiringRules { get; set; } = new();
     public VisualSettings VisualSettings { get; set; } = new();
