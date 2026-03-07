@@ -183,6 +183,32 @@ namespace IndustrialControlHMI.Views
             ArrowPath.Visibility = FlowLineModel.ShowArrow ? Visibility.Visible : Visibility.Collapsed;
             if (!FlowLineModel.ShowArrow) return;
             
+            // 检查是否为水平线段（Y方向变化很小）
+            if (FlowLineModel.IsOrthogonal && FlowLineModel.IntermediatePoints.Count > 0)
+            {
+                // 对于直角线，检查最后一段是否为水平
+                var start = FlowLineModel.IntermediatePoints[FlowLineModel.IntermediatePoints.Count - 1];
+                var end = FlowLineModel.End;
+                var deltaY = Math.Abs(end.Y - start.Y);
+                
+                // 如果最后一段是水平线（Y变化小于1），不显示箭头
+                if (deltaY < 1.0)
+                {
+                    ArrowPath.Visibility = Visibility.Collapsed;
+                    return;
+                }
+            }
+            else
+            {
+                // 对于普通线，检查整体是否为水平
+                var deltaY = Math.Abs(FlowLineModel.End.Y - FlowLineModel.Start.Y);
+                if (deltaY < 1.0)
+                {
+                    ArrowPath.Visibility = Visibility.Collapsed;
+                    return;
+                }
+            }
+            
             // 验证箭头参数
             var arrowSize = FlowLineModel.ArrowSize;
             if (arrowSize <= 0 || double.IsNaN(arrowSize) || double.IsInfinity(arrowSize))
