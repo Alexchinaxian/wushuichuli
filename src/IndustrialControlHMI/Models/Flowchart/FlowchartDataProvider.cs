@@ -115,7 +115,7 @@ public static class FlowchartDataProvider
 
         // ========== 第4列: 缺氧池 ==========
         AddUnit("IiDKO4wh8ftm1ieObsXz-20", "缺氧池", 570, 420, 150, 100, "ProcessUnit", "液位", "75%");
-        AddUnit("h1sOd0kz_K9NjbGk3U_x-3", "搅拌机", 570, 270, 100, 80, "Equipment");
+        AddUnit("h1sOd0kz_K9NjbGk3U_x-3", "搅拌机", 620, 270, 100, 80, "Equipment"); // 右移50像素，避免干扰走线
 
         // ========== 第5列: MBR膜池 + 鼓风机 ==========
         AddUnit("h1sOd0kz_K9NjbGk3U_x-4", "MBR膜池", 780, 420, 150, 100, "ProcessUnit", "液位", "75%");
@@ -196,7 +196,7 @@ public static class FlowchartDataProvider
         
         // ========== 第4列 ==========
         ["IiDKO4wh8ftm1ieObsXz-20"] = new() { ["top"] = new Point(645, 420), ["right"] = new Point(720, 470), ["bottom"] = new Point(645, 520), ["left"] = new Point(570, 470) }, // 缺氧池
-        ["h1sOd0kz_K9NjbGk3U_x-3"] = new() { ["top"] = new Point(620, 270), ["right"] = new Point(670, 310), ["bottom"] = new Point(620, 350), ["left"] = new Point(570, 310) }, // 搅拌机
+        ["h1sOd0kz_K9NjbGk3U_x-3"] = new() { ["top"] = new Point(670, 270), ["right"] = new Point(720, 310), ["bottom"] = new Point(670, 350), ["left"] = new Point(620, 310) }, // 搅拌机（右移50像素）
         
         // ========== 第5列 ==========
         ["h1sOd0kz_K9NjbGk3U_x-4"] = new() { ["top"] = new Point(855, 420), ["right"] = new Point(930, 470), ["bottom"] = new Point(855, 520), ["left"] = new Point(780, 470) }, // MBR膜池
