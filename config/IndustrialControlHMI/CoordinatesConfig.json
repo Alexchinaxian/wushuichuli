@@ -1,0 +1,23 @@
+{
+  "Version": "2.0",
+  "LastUpdated": "2026-02-12T00:00:00Z",
+  "CanvasWidth": 900,
+  "CanvasHeight": 600,
+  "AlignUnitsHorizontally": false,
+  "BaselineY": 150,
+  "HorizontalSpacing": 180,
+  "VerticalSpacing": 150,
+  "Items": [
+    { "ElementId": "deodorizer-1", "ElementType": "ProcessUnit", "X": 270, "Y": 120, "Width": 120, "Height": 60, "Comment": "除臭设备 - 参考资料未命名绘图.drawio", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "water-supply", "ElementType": "ProcessUnit", "X": 270, "Y": 260, "Width": 120, "Height": 60, "Comment": "自来水补水", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "solenoid-valve", "ElementType": "ProcessUnit", "X": 270, "Y": 360, "Width": 70, "Height": 40, "Comment": "电磁阀", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "bar-screen", "ElementType": "ProcessUnit", "X": 150, "Y": 410, "Width": 70, "Height": 40, "Comment": "格栅机", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "regulating-tank", "ElementType": "ProcessUnit", "X": 270, "Y": 420, "Width": 120, "Height": 110, "Comment": "调节池", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "deodorizer-2", "ElementType": "ProcessUnit", "X": 470, "Y": 160, "Width": 120, "Height": 60, "Comment": "除臭设备", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "deodorizer-3", "ElementType": "ProcessUnit", "X": 590, "Y": 160, "Width": 120, "Height": 60, "Comment": "除臭设备", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "dosing", "ElementType": "ProcessUnit", "X": 470, "Y": 220, "Width": 240, "Height": 60, "Comment": "加药装置", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "lift-pump-1", "ElementType": "ProcessUnit", "X": 460, "Y": 420, "Width": 210, "Height": 60, "Comment": "1#调节池提升泵", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "lift-pump-2", "ElementType": "ProcessUnit", "X": 460, "Y": 500, "Width": 210, "Height": 60, "Comment": "2#调节池提升泵", "IsVisible": true, "ParentUnitId": "" },
+    { "ElementId": "anoxic-tank", "ElementType": "ProcessUnit", "X": 750, "Y": 420, "Width": 120, "Height": 110, "Comment": "缺氧池", "IsVisible": true, "ParentUnitId": "" }
+  ]
+}

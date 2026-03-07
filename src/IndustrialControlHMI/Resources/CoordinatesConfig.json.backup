@@ -1,0 +1,569 @@
+{
+  "Version": "3.0",
+  "LastUpdated": "2026-02-12T09:19:39.008749Z",
+  "CanvasWidth": 1800,
+  "CanvasHeight": 900,
+  "AlignUnitsHorizontally": false,
+  "BaselineY": 150,
+  "HorizontalSpacing": 180,
+  "VerticalSpacing": 150,
+  "Items": [
+    {
+      "ElementId": "deodorizer-1",
+      "ElementType": "ProcessUnit",
+      "X": 270,
+      "Y": 120,
+      "Width": 120,
+      "Height": 60,
+      "Comment": "来自drawio: 左上角第一个除臭设备",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "water-supply-left",
+      "ElementType": "ProcessUnit",
+      "X": 270,
+      "Y": 230,
+      "Width": 70,
+      "Height": 40,
+      "Comment": "来自drawio: 左侧自来水补水点",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "solenoid-valve-left",
+      "ElementType": "Valve",
+      "X": 270,
+      "Y": 300,
+      "Width": 70,
+      "Height": 40,
+      "Comment": "来自drawio: 左侧电磁阀",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "bar-screen",
+      "ElementType": "Equipment",
+      "X": 150,
+      "Y": 410,
+      "Width": 70,
+      "Height": 40,
+      "Comment": "来自drawio: 最左侧格栅机",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "regulating-tank",
+      "ElementType": "ProcessUnit",
+      "X": 270,
+      "Y": 420,
+      "Width": 120,
+      "Height": 110,
+      "Comment": "来自drawio: 主要调节池",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "deodorizer-2",
+      "ElementType": "ProcessUnit",
+      "X": 470,
+      "Y": 160,
+      "Width": 120,
+      "Height": 60,
+      "Comment": "来自drawio: 第二个除臭设备",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "deodorizer-3",
+      "ElementType": "ProcessUnit",
+      "X": 590,
+      "Y": 160,
+      "Width": 120,
+      "Height": 60,
+      "Comment": "来自drawio: 第三个除臭设备",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "dosing",
+      "ElementType": "ProcessUnit",
+      "X": 470,
+      "Y": 220,
+      "Width": 240,
+      "Height": 60,
+      "Comment": "来自drawio: 加药装置（宽型）",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "lift-pump-1",
+      "ElementType": "Equipment",
+      "X": 460,
+      "Y": 420,
+      "Width": 210,
+      "Height": 60,
+      "Comment": "来自drawio: 调节池提升泵1",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "lift-pump-2",
+      "ElementType": "Equipment",
+      "X": 460,
+      "Y": 500,
+      "Width": 210,
+      "Height": 60,
+      "Comment": "来自drawio: 调节池提升泵2",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "anoxic-tank",
+      "ElementType": "ProcessUnit",
+      "X": 750,
+      "Y": 420,
+      "Width": 120,
+      "Height": 110,
+      "Comment": "来自drawio: 缺氧处理池",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "blower-1",
+      "ElementType": "Equipment",
+      "X": 880,
+      "Y": 160,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 鼓风机1",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "blower-2",
+      "ElementType": "Equipment",
+      "X": 880,
+      "Y": 230,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 鼓风机2",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "stirrer",
+      "ElementType": "Equipment",
+      "X": 800,
+      "Y": 330,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 缺氧池搅拌机",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "mbr-pool",
+      "ElementType": "ProcessUnit",
+      "X": 940,
+      "Y": 420,
+      "Width": 120,
+      "Height": 110,
+      "Comment": "来自drawio: MBR膜生物反应器",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "reflux-pump-1",
+      "ElementType": "Equipment",
+      "X": 880,
+      "Y": 560,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 回流泵1",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "reflux-pump-2",
+      "ElementType": "Equipment",
+      "X": 880,
+      "Y": 610,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 回流泵2",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "backwash-tank",
+      "ElementType": "ProcessUnit",
+      "X": 1180,
+      "Y": 170,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 反洗罐",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "backwash-pump-1",
+      "ElementType": "Equipment",
+      "X": 1080,
+      "Y": 240,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 反洗泵1",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "backwash-pump-2",
+      "ElementType": "Equipment",
+      "X": 1080,
+      "Y": 290,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 反洗泵2",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "product-pump-1",
+      "ElementType": "Equipment",
+      "X": 1180,
+      "Y": 420,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 产水泵1",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "product-pump-2",
+      "ElementType": "Equipment",
+      "X": 1180,
+      "Y": 480,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 产水泵2",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "solenoid-valve-right",
+      "ElementType": "Valve",
+      "X": 1350,
+      "Y": 320,
+      "Width": 70,
+      "Height": 40,
+      "Comment": "来自drawio: 右侧电磁阀",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "intermediate-tank",
+      "ElementType": "ProcessUnit",
+      "X": 1370,
+      "Y": 410,
+      "Width": 120,
+      "Height": 110,
+      "Comment": "来自drawio: 中间储水池",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "reuse-pump-1",
+      "ElementType": "Equipment",
+      "X": 1420,
+      "Y": 585,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 回用泵1",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "reuse-pump-2",
+      "ElementType": "Equipment",
+      "X": 1420,
+      "Y": 625,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 回用泵2",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "reuse-pump-3",
+      "ElementType": "Equipment",
+      "X": 1420,
+      "Y": 666,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 回用泵3",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "frequency-module",
+      "ElementType": "Equipment",
+      "X": 1420,
+      "Y": 700,
+      "Width": 90,
+      "Height": 40,
+      "Comment": "来自drawio: 变频控制模块",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "water-supply-right",
+      "ElementType": "ProcessUnit",
+      "X": 1370,
+      "Y": 190,
+      "Width": 120,
+      "Height": 60,
+      "Comment": "来自drawio: 右侧自来水补水点",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "sodium-hypochlorite",
+      "ElementType": "ProcessUnit",
+      "X": 1530,
+      "Y": 160,
+      "Width": 90,
+      "Height": 30,
+      "Comment": "来自drawio: 次氯酸钠投加点",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "dosing-right",
+      "ElementType": "ProcessUnit",
+      "X": 1530,
+      "Y": 190,
+      "Width": 90,
+      "Height": 30,
+      "Comment": "来自drawio: 加药装置（右侧）",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "to-water-unit",
+      "ElementType": "ProcessUnit",
+      "X": 1600,
+      "Y": 385,
+      "Width": 120,
+      "Height": 110,
+      "Comment": "来自drawio: 最终出水至用水单元",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    }
+  ],
+  "FlowLines": [
+    {
+      "Id": "line1",
+      "SourceElementId": "deodorizer-1",
+      "TargetElementId": "regulating-tank",
+      "LineType": "MainProcess",
+      "Description": "除臭设备出水至调节池"
+    },
+    {
+      "Id": "line2",
+      "SourceElementId": "solenoid-valve-left",
+      "TargetElementId": "regulating-tank",
+      "LineType": "WaterSupply",
+      "Description": "补水电磁阀控制"
+    },
+    {
+      "Id": "line3",
+      "SourceElementId": "bar-screen",
+      "TargetElementId": "regulating-tank",
+      "LineType": "MainProcess",
+      "Description": "格栅机出水至调节池"
+    },
+    {
+      "Id": "line4",
+      "SourceElementId": "dosing",
+      "TargetElementId": "regulating-tank",
+      "LineType": "Dosing",
+      "Description": "加药至调节池"
+    },
+    {
+      "Id": "line5",
+      "SourceElementId": "regulating-tank",
+      "TargetElementId": "lift-pump-1",
+      "LineType": "MainProcess",
+      "Description": "调节池至提升泵"
+    },
+    {
+      "Id": "line6",
+      "SourceElementId": "regulating-tank",
+      "TargetElementId": "lift-pump-2",
+      "LineType": "MainProcess",
+      "Description": "调节池至提升泵"
+    },
+    {
+      "Id": "line7",
+      "SourceElementId": "lift-pump-1",
+      "TargetElementId": "anoxic-tank",
+      "LineType": "MainProcess",
+      "Description": "提升泵至缺氧池"
+    },
+    {
+      "Id": "line8",
+      "SourceElementId": "lift-pump-2",
+      "TargetElementId": "anoxic-tank",
+      "LineType": "MainProcess",
+      "Description": "提升泵至缺氧池"
+    },
+    {
+      "Id": "line9",
+      "SourceElementId": "blower-1",
+      "TargetElementId": "mbr-pool",
+      "LineType": "Aeration",
+      "Description": "鼓风机供气至膜池"
+    },
+    {
+      "Id": "line10",
+      "SourceElementId": "blower-2",
+      "TargetElementId": "mbr-pool",
+      "LineType": "Aeration",
+      "Description": "鼓风机供气至膜池"
+    },
+    {
+      "Id": "line11",
+      "SourceElementId": "stirrer",
+      "TargetElementId": "anoxic-tank",
+      "LineType": "MainProcess",
+      "Description": "搅拌机至缺氧池"
+    },
+    {
+      "Id": "line12",
+      "SourceElementId": "anoxic-tank",
+      "TargetElementId": "mbr-pool",
+      "LineType": "MainProcess",
+      "Description": "缺氧池至MBR膜池"
+    },
+    {
+      "Id": "line13",
+      "SourceElementId": "mbr-pool",
+      "TargetElementId": "product-pump-1",
+      "LineType": "MainProcess",
+      "Description": "膜池产水至产水泵"
+    },
+    {
+      "Id": "line14",
+      "SourceElementId": "mbr-pool",
+      "TargetElementId": "product-pump-2",
+      "LineType": "MainProcess",
+      "Description": "膜池产水至产水泵"
+    },
+    {
+      "Id": "line15",
+      "SourceElementId": "product-pump-1",
+      "TargetElementId": "intermediate-tank",
+      "LineType": "MainProcess",
+      "Description": "产水泵至中间水池"
+    },
+    {
+      "Id": "line16",
+      "SourceElementId": "product-pump-2",
+      "TargetElementId": "intermediate-tank",
+      "LineType": "MainProcess",
+      "Description": "产水泵至中间水池"
+    },
+    {
+      "Id": "line17",
+      "SourceElementId": "solenoid-valve-right",
+      "TargetElementId": "intermediate-tank",
+      "LineType": "WaterSupply",
+      "Description": "补水至中间水池"
+    },
+    {
+      "Id": "line18",
+      "SourceElementId": "dosing-right",
+      "TargetElementId": "intermediate-tank",
+      "LineType": "Dosing",
+      "Description": "加药至中间水池"
+    },
+    {
+      "Id": "line19",
+      "SourceElementId": "sodium-hypochlorite",
+      "TargetElementId": "intermediate-tank",
+      "LineType": "Dosing",
+      "Description": "次氯酸钠消毒"
+    },
+    {
+      "Id": "line20",
+      "SourceElementId": "intermediate-tank",
+      "TargetElementId": "reuse-pump-1",
+      "LineType": "MainProcess",
+      "Description": "中间水池至回用泵"
+    },
+    {
+      "Id": "line21",
+      "SourceElementId": "reuse-pump-1",
+      "TargetElementId": "to-water-unit",
+      "LineType": "MainProcess",
+      "Description": "回用泵出水至用水单元"
+    },
+    {
+      "Id": "line22",
+      "SourceElementId": "mbr-pool",
+      "TargetElementId": "reflux-pump-1",
+      "LineType": "Reflux",
+      "Description": "膜池至回流泵"
+    },
+    {
+      "Id": "line23",
+      "SourceElementId": "mbr-pool",
+      "TargetElementId": "reflux-pump-2",
+      "LineType": "Reflux",
+      "Description": "膜池至回流泵"
+    },
+    {
+      "Id": "line24",
+      "SourceElementId": "reflux-pump-1",
+      "TargetElementId": "anoxic-tank",
+      "LineType": "Reflux",
+      "Description": "回流泵至缺氧池"
+    },
+    {
+      "Id": "line25",
+      "SourceElementId": "reflux-pump-2",
+      "TargetElementId": "anoxic-tank",
+      "LineType": "Reflux",
+      "Description": "回流泵至缺氧池"
+    },
+    {
+      "Id": "line26",
+      "SourceElementId": "backwash-tank",
+      "TargetElementId": "backwash-pump-1",
+      "LineType": "Backwash",
+      "Description": "反洗罐至反洗泵"
+    },
+    {
+      "Id": "line27",
+      "SourceElementId": "backwash-tank",
+      "TargetElementId": "backwash-pump-2",
+      "LineType": "Backwash",
+      "Description": "反洗罐至反洗泵"
+    },
+    {
+      "Id": "line28",
+      "SourceElementId": "backwash-pump-1",
+      "TargetElementId": "mbr-pool",
+      "LineType": "Backwash",
+      "Description": "反洗泵至膜池"
+    },
+    {
+      "Id": "line29",
+      "SourceElementId": "backwash-pump-2",
+      "TargetElementId": "mbr-pool",
+      "LineType": "Backwash",
+      "Description": "反洗泵至膜池"
+    }
+  ]
+}

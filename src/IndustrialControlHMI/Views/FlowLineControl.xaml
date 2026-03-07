@@ -1,0 +1,22 @@
+<UserControl x:Class="IndustrialControlHMI.Views.FlowLineControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="100" d:DesignWidth="200"
+             Cursor="Arrow">
+    <Canvas>
+        <!-- 线条与箭头全部在代码中设置，避免 XAML 绑定在 DataContext 未就绪时初始化异常 -->
+        <Path x:Name="LinePath"
+              StrokeThickness="2"
+              StrokeStartLineCap="Round"
+              StrokeEndLineCap="Round"
+              StrokeLineJoin="Round"
+              SnapsToDevicePixels="True"
+              UseLayoutRounding="True"/>
+        <Path x:Name="ArrowPath"
+              SnapsToDevicePixels="True"
+              UseLayoutRounding="True"/>
+    </Canvas>
+</UserControl>

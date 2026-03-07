@@ -1,0 +1,128 @@
+# .NET/WPF项目Git忽略文件
+
+## 构建输出
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Bb]uild/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.resources
+*.application
+*.manifest
+*.vshost.*
+*.[Pp]ublish.xml
+
+## Visual Studio文件
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.opensdf
+*.sdf
+*.cachefile
+*.dbmdl
+*.dbproj.schemaview
+*.pfx
+*.publishsettings
+*.ncrunchproject
+*.crunchproject.local.xml
+
+## Visual Studio 2015/2017/2019/2022缓存/选项目录
+.vs/
+.vscode/
+.history/
+
+## MSTest测试结果
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+## NuGet包
+[Nn]u[Gg]et/
+*.nupkg
+packages/
+packages-*/
+
+## Visual Studio NuGet
+**/packages/repositories.config
+
+## 项目特定文件
+*.csproj.user
+*.vbproj.user
+*.fsproj.user
+
+## 用户特定文件
+*.userprefs
+
+## 临时文件
+*.tmp
+*.temp
+*.log
+*.tlog
+*.lastbuildstate
+*.cache
+*.ilk
+*.ipch
+*.iobj
+*.ipdb
+*.log
+*.scc
+
+## 操作系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## 项目输出目录
+**/src/*/bin/
+**/src/*/obj/
+**/tests/*/bin/
+**/tests/*/obj/
+
+## 配置文件（可根据需要调整）
+# !config/IndustrialControlHMI/*.json  # 取消注释以包含配置文件
+# !config/IndustrialControlHMI/*.md    # 取消注释以包含配置说明
+
+## 开发工具文件
+*.swp
+*.*~
+~*.*
+
+## IDE文件
+.idea/
+*.iml
+
+## 编译中间文件
+_ReSharper.*
+*.resharper
+*.resharper.user
+
+## 代码覆盖率结果
+*.coverage
+*.coveragexml
+
+## Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## Rider
+.idea/
+*.sln.iml
+
+## 我的项目特定忽略
+# 调试日志
+debug_*.txt
+stderr.txt
+stdout.txt
+
+# 临时构建文件
+*.wpftmp.csproj
+
+# 本地开发配置（不提交到仓库）
+appsettings.Development.json
+appsettings.Local.json

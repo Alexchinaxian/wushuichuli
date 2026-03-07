@@ -1,0 +1,228 @@
+<UserControl x:Class="IndustrialControlHMI.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IndustrialControlHMI.Views"
+             xmlns:vm="clr-namespace:IndustrialControlHMI.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题栏 -->
+        <Border Grid.Row="0" Background="#0F2342" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="24" Foreground="#00A8FF" Margin="0,0,10,0"/>
+                    <TextBlock Text="参数设置" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Command="{Binding LoadSettingsCommand}" Style="{StaticResource IconButtonStyle}" ToolTip="刷新">
+                        <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White"/>
+                    </Button>
+                    <Button Command="{Binding SaveSettingsCommand}" Style="{StaticResource PrimaryButtonStyle}" ToolTip="保存" Margin="10,0,0,0">
+                        <TextBlock Text="保存" FontSize="14" Foreground="White"/>
+                    </Button>
+                    <Button Command="{Binding ResetToDefaultsAsyncCommand}" Style="{StaticResource SecondaryButtonStyle}" ToolTip="重置为默认值" Margin="10,0,0,0">
+                        <TextBlock Text="重置" FontSize="14" Foreground="White"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 主要内容区域 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧分类导航 -->
+            <Border Grid.Column="0" Background="#152A4F" BorderBrush="#0F2342" BorderThickness="0,0,1,0">
+                <ListBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" BorderThickness="0" Background="Transparent" Padding="5">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#001122" CornerRadius="4" Margin="0,2" Padding="10">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Icon}" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="#00A8FF"/>
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="White" Margin="0,5,0,0"/>
+                                    <TextBlock Text="{Binding Description}" FontSize="11" Foreground="#8E8E93" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <!-- 右侧设置内容 -->
+            <Border Grid.Column="1" Background="#001122" Padding="20">
+                <ScrollViewer>
+                    <StackPanel>
+                        <!-- 通信设置 -->
+                        <Border Background="#152A4F" CornerRadius="6" Padding="15" Margin="0,0,0,10" Visibility="{Binding SelectedCategory.Id, Converter={StaticResource CategoryToVisibilityConverter}, ConverterParameter=communication}">
+                            <StackPanel>
+                                <TextBlock Text="Modbus TCP通信设置" FontSize="16" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- IP地址 -->
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="IP地址:" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ModbusIpAddress, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+                                    <Button Grid.Row="0" Grid.Column="2" Command="{Binding TestModbusConnectionAsyncCommand}" Content="测试连接" Style="{StaticResource SmallButtonStyle}" Margin="10,5,0,5"/>
+
+                                    <!-- 端口 -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="端口:" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ModbusPort}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+
+                                    <!-- 从站ID -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="从站ID:" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ModbusSlaveId}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+
+                                    <!-- 轮询间隔 -->
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="轮询间隔(ms):" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding PollingInterval}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+
+                                    <!-- 读取超时 -->
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="读取超时(ms):" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ReadTimeout}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+
+                                    <!-- 写入超时 -->
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="写入超时(ms):" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding WriteTimeout}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 报警设置 -->
+                        <Border Background="#152A4F" CornerRadius="6" Padding="15" Margin="0,0,0,10" Visibility="{Binding SelectedCategory.Id, Converter={StaticResource CategoryToVisibilityConverter}, ConverterParameter=alarms}">
+                            <StackPanel>
+                                <TextBlock Text="报警阈值设置" FontSize="16" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+                                <DataGrid ItemsSource="{Binding AlarmThresholds}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
+                                          Style="{StaticResource DataGridStyle}" MaxHeight="300">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="参数" Binding="{Binding ParameterName}" Width="100" IsReadOnly="True"/>
+                                        <DataGridTextColumn Header="高高报" Binding="{Binding HighHigh, StringFormat=F2}" Width="80"/>
+                                        <DataGridTextColumn Header="高报" Binding="{Binding High, StringFormat=F2}" Width="80"/>
+                                        <DataGridTextColumn Header="低报" Binding="{Binding Low, StringFormat=F2}" Width="80"/>
+                                        <DataGridTextColumn Header="低低报" Binding="{Binding LowLow, StringFormat=F2}" Width="80"/>
+                                        <DataGridTextColumn Header="单位" Binding="{Binding Unit}" Width="60" IsReadOnly="True"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <TextBlock Text="修改数值后点击保存生效" FontSize="12" Foreground="#8E8E93" Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 数据存储设置 -->
+                        <Border Background="#152A4F" CornerRadius="6" Padding="15" Margin="0,0,0,10" Visibility="{Binding SelectedCategory.Id, Converter={StaticResource CategoryToVisibilityConverter}, ConverterParameter=data}">
+                            <StackPanel>
+                                <TextBlock Text="数据存储设置" FontSize="16" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- 数据保留天数 -->
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="数据保留天数:" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DataRetentionDays}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+
+                                    <!-- 启用自动备份 -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="启用自动备份:" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding EnableAutoBackup}" VerticalAlignment="Center" Margin="0,5" Foreground="White"/>
+
+                                    <!-- 备份间隔小时 -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="备份间隔(小时):" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding BackupIntervalHours}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 界面设置 -->
+                        <Border Background="#152A4F" CornerRadius="6" Padding="15" Margin="0,0,0,10" Visibility="{Binding SelectedCategory.Id, Converter={StaticResource CategoryToVisibilityConverter}, ConverterParameter=ui}">
+                            <StackPanel>
+                                <TextBlock Text="界面设置" FontSize="16" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- 主题 -->
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="主题:" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <ComboBox Grid.Row="0" Grid.Column="1" SelectedItem="{Binding Theme}" Style="{StaticResource DarkComboBoxStyle}" Margin="0,5">
+                                        <ComboBoxItem Content="深色"/>
+                                        <ComboBoxItem Content="浅色"/>
+                                    </ComboBox>
+
+                                    <!-- 图表历史点数 -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="图表历史点数:" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ChartHistoryPoints}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+
+                                    <!-- 图表刷新率 -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="图表刷新率(秒):" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,5"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ChartRefreshRate}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,5"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 系统设置（占位符） -->
+                        <Border Background="#152A4F" CornerRadius="6" Padding="15" Margin="0,0,0,10" Visibility="{Binding SelectedCategory.Id, Converter={StaticResource CategoryToVisibilityConverter}, ConverterParameter=system}">
+                            <StackPanel>
+                                <TextBlock Text="系统设置" FontSize="16" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+                                <TextBlock Text="系统设置功能正在开发中..." Foreground="#8E8E93" FontStyle="Italic"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="2" Background="#0F2342" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" Foreground="White" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="更改状态:" Foreground="#8E8E93" Margin="0,0,5,0"/>
+                    <TextBlock Text="{Binding HasChanges}" Foreground="#00A8FF" FontWeight="Bold"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

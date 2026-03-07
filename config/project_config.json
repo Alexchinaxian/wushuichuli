@@ -1,0 +1,28 @@
+{
+  "project": {
+    "name": "上位机开发项目",
+    "version": "1.0.0",
+    "description": "设备控制与数据采集上位机软件",
+    "created_date": "2026-03-07",
+    "author": "老板"
+  },
+  "development": {
+    "language": "待定",
+    "framework": "待定",
+    "ide": "待定",
+    "build_tool": "待定"
+  },
+  "hardware": {
+    "device_type": "待定",
+    "communication_protocol": "待定",
+    "connection_interface": "待定",
+    "baud_rate": 9600
+  },
+  "features": {
+    "real_time_monitoring": true,
+    "data_logging": true,
+    "chart_display": true,
+    "report_generation": true,
+    "alarm_system": true
+  }
+}

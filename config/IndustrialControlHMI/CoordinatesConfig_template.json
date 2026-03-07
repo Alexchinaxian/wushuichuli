@@ -1,0 +1,243 @@
+{
+  "Version": "1.0",
+  "LastUpdated": "2026-02-11T00:20:45Z",
+  "CanvasWidth": 1400,
+  "CanvasHeight": 700,
+  "AlignUnitsHorizontally": true,
+  "BaselineY": 150,
+  "HorizontalSpacing": 180,
+  "VerticalSpacing": 150,
+  "Items": [
+    {
+      "ElementId": "bar-screen",
+      "ElementType": "ProcessUnit",
+      "X": 50,
+      "Y": 500,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "格栅机 - 主工艺流程起点，位于最左侧",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "regulating-tank",
+      "ElementType": "ProcessUnit",
+      "X": 230,
+      "Y": 900,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "调节池 - 所有处理单元在同一水平线上对齐",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "anoxic-tank",
+      "ElementType": "ProcessUnit",
+      "X": 410,
+      "Y": 150,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "缺氧池 - 水平对齐，Y=150",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "mbr-tank",
+      "ElementType": "ProcessUnit",
+      "X": 590,
+      "Y": 150,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "MBR膜池 - 水平对齐，Y=150",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "production-pump",
+      "ElementType": "ProcessUnit",
+      "X": 770,
+      "Y": 150,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "产水泵 - 水平对齐，Y=150（与其他池在同一水平线）",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "disinfection-tank",
+      "ElementType": "ProcessUnit",
+      "X": 950,
+      "Y": 150,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "消毒池 - 水平对齐，Y=150",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "outlet",
+      "ElementType": "ProcessUnit",
+      "X": 1130,
+      "Y": 150,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "出水 - 水平对齐，Y=150",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "dosing-carbon",
+      "ElementType": "ProcessUnit",
+      "X": 230,
+      "Y": 300,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "碳源加药 - 辅助单元，在调节池下方",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "backwash-system",
+      "ElementType": "ProcessUnit",
+      "X": 590,
+      "Y": 300,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "反洗系统 - 在MBR膜池下方",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "intermediate-tank",
+      "ElementType": "ProcessUnit",
+      "X": 770,
+      "Y": 300,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "中间水池 - 在产水泵下方",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "lift-pump-1",
+      "ElementType": "ProcessUnit",
+      "X": 230,
+      "Y": 450,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "1#提升泵 - 独立设备单元，位于调节池下方第二行",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "lift-pump-2",
+      "ElementType": "ProcessUnit",
+      "X": 410,
+      "Y": 450,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "2#提升泵 - 独立设备单元，与1#提升泵水平排列",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "regulating-mixer",
+      "ElementType": "ProcessUnit",
+      "X": 590,
+      "Y": 450,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "搅拌机 - 独立设备单元，调节池搅拌设备",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "deodorizer",
+      "ElementType": "ProcessUnit",
+      "X": 770,
+      "Y": 450,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "除臭设备 - 独立设备单元，调节池除臭设备",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "anoxic-mixer",
+      "ElementType": "ProcessUnit",
+      "X": 950,
+      "Y": 450,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "缺氧池搅拌机 - 独立设备单元，缺氧池搅拌设备",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "blower-1",
+      "ElementType": "ProcessUnit",
+      "X": 230,
+      "Y": 600,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "1#鼓风机 - 独立设备单元，MBR膜池鼓风设备，位于第三行",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "blower-2",
+      "ElementType": "ProcessUnit",
+      "X": 410,
+      "Y": 600,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "2#鼓风机 - 独立设备单元，与1#鼓风机水平排列",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "reflux-pump-1",
+      "ElementType": "ProcessUnit",
+      "X": 590,
+      "Y": 600,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "1#回流泵 - 独立设备单元，MBR膜池回流设备",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "reflux-pump-2",
+      "ElementType": "ProcessUnit",
+      "X": 770,
+      "Y": 600,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "2#回流泵 - 独立设备单元，与1#回流泵水平排列",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "backwash-pump",
+      "ElementType": "ProcessUnit",
+      "X": 950,
+      "Y": 600,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "反洗泵 - 独立设备单元，反洗系统设备",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    },
+    {
+      "ElementId": "backwash-tank",
+      "ElementType": "ProcessUnit",
+      "X": 1130,
+      "Y": 600,
+      "Width": 160,
+      "Height": 120,
+      "Comment": "反洗罐 - 独立设备单元，反洗系统容器",
+      "IsVisible": true,
+      "ParentUnitId": ""
+    }
+  ]
+}

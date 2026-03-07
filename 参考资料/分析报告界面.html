@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>未命名绘图 - 工艺概览</title>
+  <link rel="stylesheet" href="分析报告界面.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>未命名绘图.drawio 工艺概览</h1>
+      <div class="header-meta">
+        <span>图名：第 1 页</span>
+        <span>画布：827×1169</span>
+        <span class="clock" id="sysTime">--:--:--</span>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- 工艺概览：简图 + 文字流程 -->
+      <section id="panel-overview" class="panel active">
+        <h2>工艺流程图（按报告坐标简图）</h2>
+        <p class="hint">左侧：自来水补水 → 电磁阀 → 调节池；调节池分两路：①→1#调节池提升泵→缺氧池、②→2#调节池提升泵→缺氧池。右侧：自来水补水 → 电磁阀 → 中间水池。</p>
+        <div class="connection-callout">
+          <strong>调节池 → 提升泵 → 缺氧池（两条路径）：</strong><br/>
+          1、调节池 → 1# 调节池提升泵 → 缺氧池<br/>
+          2、调节池 → 2# 调节池提升泵 → 缺氧池
+        </div>
+        <div class="diagram-wrap">
+          <svg id="overviewSvg" class="overview-svg" viewBox="0 0 1700 800" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="tankGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#2a4a6a" />
+                <stop offset="100%" stop-color="#1a2d44" />
+              </linearGradient>
+              <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#3a7ca5" />
+                <stop offset="100%" stop-color="#5ba3c6" />
+              </linearGradient>
+            </defs>
+            <g id="pipes-layer"></g>
+            <g id="devices-layer"></g>
+          </svg>
+        </div>
+        <h3>工艺流程图（文字版）</h3>
+        <pre class="flow-text" id="flowText"></pre>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>数据来源：未命名绘图.drawio</span>
+      <span>工艺概览</span>
+    </footer>
+  </div>
+  <script src="分析报告界面.js"></script>
+</body>
+</html>
