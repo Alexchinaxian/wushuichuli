@@ -273,19 +273,21 @@ public static class FlowchartDataProvider
         // 除臭设备右边点
         var 除臭设备_右 = new Point(140, 50);
         
-        // 定义目标设备上边点
+        // 定义目标设备连接点
         var 调节池_上 = new Point(275, 420);
+        
+        // 除臭设备 → 调节池（简洁的横线和竖线连接）
+        // 路径：水平向右到调节池上边点X坐标 → 垂直向下到调节池上边点
+        AddOrtho(除臭设备_右, new Point(调节池_上.X, 50), FlowLineType.Deodorization, true);  // 水平线
+        AddOrtho(new Point(调节池_上.X, 50), 调节池_上, FlowLineType.Deodorization, true);    // 垂直线
+        
+        // 其他除臭设备连接线保持不变（如果需要连接其他设备）
         var 缺氧池_上 = new Point(645, 420);
         var MBR膜池_上 = new Point(855, 420);
         
         // 公共绕行路径：从除臭设备直接向右 → 再向下到目标
         // 水平绕行Y坐标（在设备下方，避免斜线）
         double 水平绕行Y = 80;  // 从Y=50向下移动到Y=80
-        
-        // 除臭设备 → 调节池（水平向右，然后垂直向下）
-        // 路径：右 → 下（不再向上）
-        AddOrtho(除臭设备_右, new Point(调节池_上.X, 水平绕行Y), FlowLineType.Deodorization, true);
-        AddOrtho(new Point(调节池_上.X, 水平绕行Y), 调节池_上, FlowLineType.Deodorization, true);
         
         // 除臭设备 → 缺氧池（水平向右，然后垂直向下）
         AddOrtho(除臭设备_右, new Point(缺氧池_上.X, 水平绕行Y), FlowLineType.Deodorization, true);
