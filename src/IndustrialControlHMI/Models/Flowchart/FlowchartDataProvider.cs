@@ -278,22 +278,22 @@ public static class FlowchartDataProvider
         var 缺氧池_上 = new Point(645, 420);
         var MBR膜池_上 = new Point(855, 420);
         
-        // 公共绕行路径：从除臭设备向右 → 向上到顶部 → 再向右 → 最后向下到目标
-        // 顶部绕行Y坐标（在设备上方）
-        double 顶部绕行Y = 5;
+        // 公共绕行路径：从除臭设备直接向右 → 再向下到目标
+        // 水平绕行Y坐标（在设备下方，避免斜线）
+        double 水平绕行Y = 80;  // 从Y=50向下移动到Y=80
         
-        // 除臭设备 → 调节池（绕行顶部）
-        // 路径：右 → 上 → 右 → 下
-        AddOrtho3(除臭设备_右, new Point(140, 顶部绕行Y), new Point(调节池_上.X, 顶部绕行Y), FlowLineType.Deodorization, true);
-        AddOrtho(new Point(调节池_上.X, 顶部绕行Y), 调节池_上, FlowLineType.Deodorization, true);
+        // 除臭设备 → 调节池（水平向右，然后垂直向下）
+        // 路径：右 → 下（不再向上）
+        AddOrtho(除臭设备_右, new Point(调节池_上.X, 水平绕行Y), FlowLineType.Deodorization, true);
+        AddOrtho(new Point(调节池_上.X, 水平绕行Y), 调节池_上, FlowLineType.Deodorization, true);
         
-        // 除臭设备 → 缺氧池（绕行顶部）
-        AddOrtho3(除臭设备_右, new Point(100, 顶部绕行Y), new Point(缺氧池_上.X, 顶部绕行Y), FlowLineType.Deodorization, true);
-        AddOrtho(new Point(缺氧池_上.X, 顶部绕行Y), 缺氧池_上, FlowLineType.Deodorization, true);
+        // 除臭设备 → 缺氧池（水平向右，然后垂直向下）
+        AddOrtho(除臭设备_右, new Point(缺氧池_上.X, 水平绕行Y), FlowLineType.Deodorization, true);
+        AddOrtho(new Point(缺氧池_上.X, 水平绕行Y), 缺氧池_上, FlowLineType.Deodorization, true);
         
-        // 除臭设备 → MBR膜池（绕行顶部）
-        AddOrtho3(除臭设备_右, new Point(140, 顶部绕行Y), new Point(MBR膜池_上.X, 顶部绕行Y), FlowLineType.Deodorization, true);
-        AddOrtho(new Point(MBR膜池_上.X, 顶部绕行Y), MBR膜池_上, FlowLineType.Deodorization, true);
+        // 除臭设备 → MBR膜池（水平向右，然后垂直向下）
+        AddOrtho(除臭设备_右, new Point(MBR膜池_上.X, 水平绕行Y), FlowLineType.Deodorization, true);
+        AddOrtho(new Point(MBR膜池_上.X, 水平绕行Y), MBR膜池_上, FlowLineType.Deodorization, true);
         
         // ========== 补水流程线（绿色实线）==========
         // 定义第1列左侧补水设备连接点
