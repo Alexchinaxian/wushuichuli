@@ -451,39 +451,30 @@ public static class FlowchartDataProvider
         var 回用泵3_右 = new Point(1250, 750);
         var 至用水单元_下 = new Point(1300, 125);
         
-        // 主干线：中间水池(下) → 向下一点 → 向左 → 再分别连接到各回用泵
-        // 只垂直向下30像素，然后水平向左到X=1130，再垂直分散到各回用泵
-        double 主干转折Y = 550;  // 只向下30像素（中间水池下在Y=520）
-        double 主干线X = 1130;
+        // 中间水池(下) → 各回用泵(左)：简洁的L形连接
+        // 1#回用泵：水平向左 → 垂直向上
+        AddOrtho(中间水池_下, new Point(回用泵1_左.X, 520), FlowLineType.MainProcess);
+        AddOrtho(new Point(回用泵1_左.X, 520), 回用泵1_左, FlowLineType.MainProcess);
         
-        // 中间水池(下) → 垂直向下（短距离）
-        AddOrtho(中间水池_下, new Point(1225, 主干转折Y), FlowLineType.MainProcess);
+        // 2#回用泵：水平向左 → 垂直向下
+        AddOrtho(中间水池_下, new Point(回用泵2_左.X, 520), FlowLineType.MainProcess);
+        AddOrtho(new Point(回用泵2_左.X, 520), 回用泵2_左, FlowLineType.MainProcess);
         
-        // 垂直段 → 水平向左（主干线）
-        AddOrtho(new Point(1225, 主干转折Y), new Point(主干线X, 主干转折Y), FlowLineType.MainProcess);
+        // 3#回用泵：水平向左 → 垂直向下
+        AddOrtho(中间水池_下, new Point(回用泵3_左.X, 520), FlowLineType.MainProcess);
+        AddOrtho(new Point(回用泵3_左.X, 520), 回用泵3_左, FlowLineType.MainProcess);
         
-        // 主干线 → 1#回用泵(左)：垂直向上到回用泵
-        AddOrtho(new Point(主干线X, 主干转折Y), 回用泵1_左, FlowLineType.MainProcess);
+        // 1#回用泵(右) → 至用水单元(下)：水平向右 → 垂直向上（简洁的L形）
+        AddOrtho(回用泵1_右, new Point(至用水单元_下.X, 590), FlowLineType.MainProcess);
+        AddOrtho(new Point(至用水单元_下.X, 590), 至用水单元_下, FlowLineType.MainProcess);
         
-        // 主干线 → 2#回用泵(左)：垂直向下到回用泵
-        AddOrtho(new Point(主干线X, 主干转折Y), new Point(主干线X, 670), FlowLineType.MainProcess);
-        AddOrtho(new Point(主干线X, 670), 回用泵2_左, FlowLineType.MainProcess);
+        // 2#回用泵(右) → 至用水单元(下)：水平向右 → 垂直向上（简洁的L形）
+        AddOrtho(回用泵2_右, new Point(至用水单元_下.X, 670), FlowLineType.MainProcess);
+        AddOrtho(new Point(至用水单元_下.X, 670), 至用水单元_下, FlowLineType.MainProcess);
         
-        // 主干线 → 3#回用泵(左)：继续垂直向下到回用泵
-        AddOrtho(new Point(主干线X, 670), new Point(主干线X, 750), FlowLineType.MainProcess);
-        AddOrtho(new Point(主干线X, 750), 回用泵3_左, FlowLineType.MainProcess);
-        
-        // 1#回用泵(右) → 至用水单元(下)：统一中间过渡线X=1280
-        AddOrtho3(回用泵1_右, new Point(1280, 590), new Point(1280, 125), FlowLineType.MainProcess);
-        AddOrtho(new Point(1280, 125), 至用水单元_下, FlowLineType.MainProcess);
-        
-        // 2#回用泵(右) → 至用水单元(下)：统一中间过渡线X=1280
-        AddOrtho3(回用泵2_右, new Point(1280, 670), new Point(1280, 125), FlowLineType.MainProcess);
-        AddOrtho(new Point(1280, 125), 至用水单元_下, FlowLineType.MainProcess);
-        
-        // 3#回用泵(右) → 至用水单元(下)：统一中间过渡线X=1280
-        AddOrtho3(回用泵3_右, new Point(1280, 750), new Point(1280, 125), FlowLineType.MainProcess);
-        AddOrtho(new Point(1280, 125), 至用水单元_下, FlowLineType.MainProcess);
+        // 3#回用泵(右) → 至用水单元(下)：水平向右 → 垂直向上（简洁的L形）
+        AddOrtho(回用泵3_右, new Point(至用水单元_下.X, 750), FlowLineType.MainProcess);
+        AddOrtho(new Point(至用水单元_下.X, 750), 至用水单元_下, FlowLineType.MainProcess);
         
         // ========== 鼓风机连接线（黄色实线 - 曝气线）==========
         // 1#鼓风机(右) → MBR膜池(上)：水平向右 → 垂直向下
@@ -524,11 +515,10 @@ public static class FlowchartDataProvider
         AddOrtho(缺氧池搅拌机_下, 缺氧池_上, FlowLineType.WaterSupply, true);
         
         // ========== 右侧加药装置连接线（绿色虚线）==========
-        // 加药装置(右)下边点 → 中间水池上边点
+        // 加药装置(右)下边点 → 中间水池上边点：水平向左 → 垂直向上（简洁的L形）
         var 加药装置右_下 = new Point(1290, 370);
-        // 路径：垂直向下 → 水平向左 → 垂直向上（门字形）
-        AddOrtho3(加药装置右_下, new Point(1290, 400), new Point(中间水池_上.X, 400), FlowLineType.WaterSupply, true);
-        AddOrtho(new Point(中间水池_上.X, 400), 中间水池_上, FlowLineType.WaterSupply, true);
+        AddOrtho(加药装置右_下, new Point(中间水池_上.X, 370), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(中间水池_上.X, 370), 中间水池_上, FlowLineType.WaterSupply, true);
         
         System.Diagnostics.Debug.WriteLine($"[流程图数据] 连接线加载完成，共 {lines.Count} 条");
         return lines;
