@@ -331,9 +331,11 @@ public static class FlowchartDataProvider
         // 自来水补水(右)的下点 → 电磁阀(右)的上点：垂直向下
         AddOrtho(自来水补水右_下, 电磁阀右_上, FlowLineType.WaterSupply);
         
-        // 电磁阀(右)的下点 → 中间水池上点：水平向右 → 垂直向上（简洁的L形）
-        AddOrtho(电磁阀右_下, new Point(中间水池_上.X, 370), FlowLineType.WaterSupply);
-        AddOrtho(new Point(中间水池_上.X, 370), 中间水池_上, FlowLineType.WaterSupply);
+        // 电磁阀(右)的下点 → 中间水池上点：修改为先垂直向下 → 再水平向右 → 再垂直向下
+        // 从电磁阀下点(1150,370)垂直向下到(1150,400)，然后水平向右到中间水池上方(1225,400)，最后垂直向下到中间水池(1225,420)
+        AddOrtho(电磁阀右_下, new Point(1150, 400), FlowLineType.WaterSupply);
+        AddOrtho(new Point(1150, 400), new Point(1225, 400), FlowLineType.WaterSupply);
+        AddOrtho(new Point(1225, 400), 中间水池_上, FlowLineType.WaterSupply);
         
         // ========== 主工艺流程线（灰色实线）==========
         // 格栅机(右) → 调节池(左)：水平直线（两点在同一水平线 Y=470）
@@ -532,10 +534,12 @@ public static class FlowchartDataProvider
         AddOrtho(缺氧池搅拌机_下, 缺氧池_上, FlowLineType.WaterSupply, true);
         
         // ========== 右侧加药装置连接线（绿色虚线）==========
-        // 加药装置(右)下边点 → 中间水池上边点：水平向左 → 垂直向上（简洁的L形）
+        // 加药装置(右)下边点 → 中间水池上边点：修改为先垂直向下 → 再水平向左 → 再垂直向下
+        // 从加药装置下点(1290,370)垂直向下到(1290,400)，然后水平向左到中间水池上方(1225,400)，最后垂直向下到中间水池(1225,420)
         var 加药装置右_下 = new Point(1290, 370);
-        AddOrtho(加药装置右_下, new Point(中间水池_上.X, 370), FlowLineType.WaterSupply, true);
-        AddOrtho(new Point(中间水池_上.X, 370), 中间水池_上, FlowLineType.WaterSupply, true);
+        AddOrtho(加药装置右_下, new Point(1290, 400), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(1290, 400), new Point(1225, 400), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(1225, 400), 中间水池_上, FlowLineType.WaterSupply, true);
         
         System.Diagnostics.Debug.WriteLine($"[流程图数据] 连接线加载完成，共 {lines.Count} 条");
         return lines;
