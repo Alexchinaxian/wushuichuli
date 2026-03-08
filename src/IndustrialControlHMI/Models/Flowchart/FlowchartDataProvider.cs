@@ -515,13 +515,17 @@ public static class FlowchartDataProvider
         // 底部绕行Y坐标（在设备下方，绕过所有中间设备）
         double 底部绕行Y = 330;
         
-        // 加药装置 → 调节池上边线右边点（绕行底部）直接L形连接
-        AddOrtho3(加药装置_下, new Point(450, 底部绕行Y), new Point(调节池_右边点.X, 底部绕行Y), FlowLineType.WaterSupply, true);
-        AddOrtho(new Point(调节池_右边点.X, 底部绕行Y), 调节池_右边点, FlowLineType.WaterSupply, true);
+        // 加药装置 → 调节池（修改：最后直接垂直向下，不需要水平折线）
+        // 从加药装置下点(450,250)垂直向下到(450,380)，然后水平向左到调节池上方(300,380)，最后垂直向下到调节池(300,420)
+        AddOrtho(加药装置_下, new Point(450, 380), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(450, 380), new Point(300, 380), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(300, 380), 调节池_右边点, FlowLineType.WaterSupply, true);
         
-        // 加药装置 → 缺氧池（绕行底部）
-        AddOrtho3(加药装置_下, new Point(450, 底部绕行Y), new Point(缺氧池_上.X, 底部绕行Y), FlowLineType.WaterSupply, true);
-        AddOrtho(new Point(缺氧池_上.X, 底部绕行Y), 缺氧池_上, FlowLineType.WaterSupply, true);
+        // 加药装置 → 缺氧池（修改：最后直接垂直向下，不需要水平折线）
+        // 从加药装置下点(450,250)垂直向下到(450,400)，然后水平向右到缺氧池上方(645,400)，最后垂直向下到缺氧池(645,420)
+        AddOrtho(加药装置_下, new Point(450, 400), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(450, 400), new Point(645, 400), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(645, 400), 缺氧池_上, FlowLineType.WaterSupply, true);
         
         // 缺氧池区域搅拌机 → 缺氧池（直接垂直连接，绿色虚线）
         // 路径：搅拌机下边(620,350) → 垂直向下到Y=420 → 水平向右到缺氧池上边(645,420)
