@@ -146,7 +146,7 @@ public static class FlowchartDataProvider
         // ========== 第8列: 加药装置(右) + 至用水单元 ==========
         AddUnit("h1sOd0kz_K9NjbGk3U_x-46", "次氯酸钠", 1240, 210, 100, 80, "Equipment");
         AddUnit("h1sOd0kz_K9NjbGk3U_x-47", "加药装置", 1240, 290, 100, 80, "ProcessUnit");
-        AddUnit("h1sOd0kz_K9NjbGk3U_x-55", "至用水单元", 1250, 710, 100, 80, "Equipment");
+        AddUnit("h1sOd0kz_K9NjbGk3U_x-55", "至用水单元", 1000, 710, 100, 80, "Equipment");
 
         System.Diagnostics.Debug.WriteLine($"[流程图数据] 总共创建单元数: {units.Count}");
         return units;
@@ -226,7 +226,7 @@ public static class FlowchartDataProvider
         // ========== 第8列 ==========
         ["h1sOd0kz_K9NjbGk3U_x-46"] = new() { ["top"] = new Point(1290, 210), ["right"] = new Point(1340, 250), ["bottom"] = new Point(1290, 290), ["left"] = new Point(1240, 250) }, // 次氯酸钠投加
         ["h1sOd0kz_K9NjbGk3U_x-47"] = new() { ["top"] = new Point(1290, 290), ["right"] = new Point(1340, 330), ["bottom"] = new Point(1290, 370), ["left"] = new Point(1240, 330) }, // 加药装置(右)
-        ["h1sOd0kz_K9NjbGk3U_x-55"] = new() { ["top"] = new Point(1300, 710), ["right"] = new Point(1350, 750), ["bottom"] = new Point(1300, 790), ["left"] = new Point(1250, 750) }, // 至用水单元
+        ["h1sOd0kz_K9NjbGk3U_x-55"] = new() { ["top"] = new Point(1050, 710), ["right"] = new Point(1100, 750), ["bottom"] = new Point(1050, 790), ["left"] = new Point(1000, 750) }, // 至用水单元
     };
 
     /// <summary>
@@ -462,8 +462,8 @@ public static class FlowchartDataProvider
         var 回用泵1_右 = new Point(1250, 590);
         var 回用泵2_右 = new Point(1250, 670);
         var 回用泵3_右 = new Point(1250, 750);
-        var 至用水单元_下 = new Point(1300, 790);
-        var 至用水单元_左 = new Point(1250, 750);
+        var 至用水单元_下 = new Point(1050, 790);
+        var 至用水单元_左 = new Point(1000, 750);
         
         // 中间水池(下) → 各回用泵(左)：简洁的L形连接
         // 1#回用泵：水平向左 → 垂直向上
@@ -478,18 +478,18 @@ public static class FlowchartDataProvider
         AddOrtho(中间水池_下, new Point(回用泵3_左.X, 520), FlowLineType.MainProcess);
         AddOrtho(new Point(回用泵3_左.X, 520), 回用泵3_左, FlowLineType.MainProcess);
         
-        // 回用泵 → 至用水单元：优化后的连线（用水单元已下移与回用泵3等高）
+        // 回用泵 → 至用水单元：优化后的连线（用水单元已移到回用泵左侧）
         
-        // 1#回用泵(右) → 至用水单元(下)：水平向右 → 垂直向下（简洁的L形）
-        AddOrtho(回用泵1_右, new Point(至用水单元_下.X, 590), FlowLineType.MainProcess);
-        AddOrtho(new Point(至用水单元_下.X, 590), 至用水单元_下, FlowLineType.MainProcess);
+        // 1#回用泵(右) → 至用水单元(左)：水平向左 → 垂直向下（简洁的L形）
+        AddOrtho(回用泵1_右, new Point(至用水单元_左.X, 590), FlowLineType.MainProcess);
+        AddOrtho(new Point(至用水单元_左.X, 590), 至用水单元_左, FlowLineType.MainProcess);
         
-        // 2#回用泵(右) → 至用水单元(下)：水平向右 → 垂直向下（简洁的L形）
-        AddOrtho(回用泵2_右, new Point(至用水单元_下.X, 670), FlowLineType.MainProcess);
-        AddOrtho(new Point(至用水单元_下.X, 670), 至用水单元_下, FlowLineType.MainProcess);
+        // 2#回用泵(右) → 至用水单元(左)：水平向左 → 垂直向下（简洁的L形）
+        AddOrtho(回用泵2_右, new Point(至用水单元_左.X, 670), FlowLineType.MainProcess);
+        AddOrtho(new Point(至用水单元_左.X, 670), 至用水单元_左, FlowLineType.MainProcess);
         
-        // 3#回用泵(右) → 至用水单元(左)：水平向右直接连接（等高连接）
-        AddOrtho(回用泵3_右, new Point(至用水单元_左.X, 750), FlowLineType.MainProcess);
+        // 3#回用泵(右) → 至用水单元(左)：水平向左直接连接（等高连接）
+        AddOrtho(回用泵3_右, 至用水单元_左, FlowLineType.MainProcess);
         
         // ========== 鼓风机连接线（黄色实线 - 曝气线）==========
         // 1#鼓风机(右) → MBR膜池(上)：水平向右 → 垂直向下
