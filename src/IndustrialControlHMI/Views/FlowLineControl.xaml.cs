@@ -207,7 +207,7 @@ namespace IndustrialControlHMI.Views
                 var deltaY = Math.Abs(end.Y - start.Y);
                 
                 // 如果最后一段是水平线（X变化远大于Y变化）
-                if (!WiringConfigLoader.ShouldShowArrow(deltaX, deltaY))
+                if (!ShouldShowArrowHardcoded(deltaX, deltaY))
                 {
                     ArrowPath.Visibility = Visibility.Collapsed;
                     return;
@@ -220,7 +220,7 @@ namespace IndustrialControlHMI.Views
                 var deltaY = Math.Abs(FlowLineModel.End.Y - FlowLineModel.Start.Y);
                 
                 // 如果是水平线（X变化远大于Y变化）
-                if (!WiringConfigLoader.ShouldShowArrow(deltaX, deltaY))
+                if (!ShouldShowArrowHardcoded(deltaX, deltaY))
                 {
                     ArrowPath.Visibility = Visibility.Collapsed;
                     return;
@@ -310,6 +310,32 @@ namespace IndustrialControlHMI.Views
             var deltaX = end.X - start.X;
             var deltaY = end.Y - start.Y;
             return Math.Atan2(deltaY, deltaX);
+        }
+
+        /// <summary>
+        /// 硬编码的箭头显示规则
+        /// 根据线段的方向和长度决定是否显示箭头
+        /// </summary>
+        private static bool ShouldShowArrowHardcoded(double deltaX, double deltaY)
+        {
+            // 水平线（X变化远大于Y变化）不显示箭头
+            const double horizontalThreshold = 5.0;
+            const double verticalThreshold = 5.0;
+            const double minSegmentLength = 10.0;
+            
+            if (deltaX > horizontalThreshold && deltaY < verticalThreshold)
+            {
+                return false;
+            }
+            
+            // 线段太短也不显示箭头
+            var segmentLength = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (segmentLength < minSegmentLength)
+            {
+                return false;
+            }
+            
+            return true;
         }
 
         #region 箭头点依赖属性（用于XAML绑定）

@@ -75,11 +75,11 @@ public static class FlowchartDataProvider
             
             if (type == "Equipment")
             {
-                unit.Equipment.Add(new EquipmentItem { Name = title, EquipmentType = "设备", Status = EquipmentStatus.Running, Value = "运行" });
+                unit.Equipment.Add(new EquipmentItem { Name = title, EquipmentType = "设备", Status = EquipmentStatus.Stopped, Value = "停止" });
             }
             else if (type == "Valve")
             {
-                unit.Equipment.Add(new EquipmentItem { Name = title, EquipmentType = "阀门", Status = EquipmentStatus.Running, Value = "开启" });
+                unit.Equipment.Add(new EquipmentItem { Name = title, EquipmentType = "阀门", Status = EquipmentStatus.Stopped, Value = "关闭" });
             }
             
             if (paramName != null && paramValue != null)
@@ -276,10 +276,19 @@ public static class FlowchartDataProvider
         // 定义目标设备连接点
         var 调节池_上 = new Point(275, 420);
         
-        // 除臭设备 → 调节池（简洁的横线和竖线连接）
-        // 路径：水平向右到调节池上边点X坐标 → 垂直向下到调节池上边点
-        AddOrtho(除臭设备_右, new Point(调节池_上.X, 50), FlowLineType.Deodorization, true);  // 水平线
-        AddOrtho(new Point(调节池_上.X, 50), 调节池_上, FlowLineType.Deodorization, true);    // 垂直线
+        // 调节池上边线三个连接点（根据用户位置分析）
+        // 调节池位置：X=270, Y=420, 120×110
+        // 上边线中心点：(330, 420)
+        // 三个分点应该在调节池的上边线上（Y=420）
+        // X坐标统一缩小，再向左移动50像素，让中心点放在水池中间位置向左偏移50像素，左右各偏移70像素
+        var 调节池_左边点 = new Point(260, 420);  // regulating-tank-left-point (上边线，距离中心点70像素)
+        var 调节池_中心点 = new Point(280, 420);  // regulating-tank-center-point (上边线，水池中间向左偏移50像素)
+        var 调节池_右边点 = new Point(300, 420);  // regulating-tank-right-point (上边线，距离中心点70像素)
+        
+        // 除臭设备 → 调节池上边线中心点（简洁的横线和竖线连接）直接L形连接
+        // 路径：水平向右到调节池中心点X坐标(330,50) → 垂直向下到调节池上边线中心点(330,420)
+        AddOrtho(除臭设备_右, new Point(调节池_中心点.X, 50), FlowLineType.Deodorization, true);  // 水平线
+        AddOrtho(new Point(调节池_中心点.X, 50), 调节池_中心点, FlowLineType.Deodorization, true);    // 垂直线
         
         // 其他除臭设备连接线保持不变（如果需要连接其他设备）
         var 缺氧池_上 = new Point(645, 420);
@@ -307,9 +316,11 @@ public static class FlowchartDataProvider
         // 自来水补水(左)的下点 → 电磁阀(左)的上点：垂直向下
         AddOrtho(自来水补水左_下, 电磁阀左_上, FlowLineType.WaterSupply);
         
-        // 电磁阀(左)的下点 → 调节池上点：水平向右 → 垂直向上（简洁的L形）
-        AddOrtho(电磁阀左_下, new Point(调节池_上.X, 370), FlowLineType.WaterSupply);
-        AddOrtho(new Point(调节池_上.X, 370), 调节池_上, FlowLineType.WaterSupply);
+        // 电磁阀(左)的下点 → 调节池上边线左边点：修改为先向下→再向右→再向下
+        // 从电磁阀下点(90,370)垂直向下到(90,400)，然后水平向右到(260,400)，最后垂直向下到调节池左边点(260,420)
+        AddOrtho(电磁阀左_下, new Point(90, 400), FlowLineType.WaterSupply);
+        AddOrtho(new Point(90, 400), new Point(260, 400), FlowLineType.WaterSupply);
+        AddOrtho(new Point(260, 400), 调节池_左边点, FlowLineType.WaterSupply);
         
         // 定义右侧设备连接点（中间水池补水）
         var 自来水补水右_下 = new Point(1150, 230);  // 自来水补水(右)的下点
@@ -504,9 +515,9 @@ public static class FlowchartDataProvider
         // 底部绕行Y坐标（在设备下方，绕过所有中间设备）
         double 底部绕行Y = 330;
         
-        // 加药装置 → 调节池（绕行底部）
-        AddOrtho3(加药装置_下, new Point(450, 底部绕行Y), new Point(调节池_上.X, 底部绕行Y), FlowLineType.WaterSupply, true);
-        AddOrtho(new Point(调节池_上.X, 底部绕行Y), 调节池_上, FlowLineType.WaterSupply, true);
+        // 加药装置 → 调节池上边线右边点（绕行底部）直接L形连接
+        AddOrtho3(加药装置_下, new Point(450, 底部绕行Y), new Point(调节池_右边点.X, 底部绕行Y), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(调节池_右边点.X, 底部绕行Y), 调节池_右边点, FlowLineType.WaterSupply, true);
         
         // 加药装置 → 缺氧池（绕行底部）
         AddOrtho3(加药装置_下, new Point(450, 底部绕行Y), new Point(缺氧池_上.X, 底部绕行Y), FlowLineType.WaterSupply, true);

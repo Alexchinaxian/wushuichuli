@@ -114,7 +114,9 @@ public class ProcessUnitModel : INotifyPropertyChanged
         get
         {
             if (IsAlarm) return EquipmentStatus.Fault;
-            if (Equipment.Count == 0) return EquipmentStatus.Running;
+            
+            // 对于没有设备的工艺单元（如调节池、缺氧池），不显示运行状态
+            if (Equipment.Count == 0) return EquipmentStatus.Stopped;
             
             var anyFault = Equipment.Any(e => e.Status == EquipmentStatus.Fault);
             var anyWarning = Equipment.Any(e => e.Status == EquipmentStatus.Warning);
@@ -490,14 +492,23 @@ public class ProcessUnitModel : INotifyPropertyChanged
     /// <summary>
     /// 获取状态文本
     /// </summary>
-    public string StatusText => Status switch
+    public string StatusText
     {
-        EquipmentStatus.Running => "运行",
-        EquipmentStatus.Stopped => "停止",
-        EquipmentStatus.Fault => "故障",
-        EquipmentStatus.Warning => "警告",
-        _ => "未知"
-    };
+        get
+        {
+            // 对于没有设备的工艺单元（如调节池、缺氧池），不显示状态文本
+            if (Equipment.Count == 0) return string.Empty;
+            
+            return Status switch
+            {
+                EquipmentStatus.Running => "运行",
+                EquipmentStatus.Stopped => "停止",
+                EquipmentStatus.Fault => "故障",
+                EquipmentStatus.Warning => "警告",
+                _ => "未知"
+            };
+        }
+    }
     
     /// <summary>
     /// 模拟故障状态（用于测试）
