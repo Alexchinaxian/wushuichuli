@@ -420,13 +420,13 @@ public static class FlowchartDataProvider
         // 统一中转X坐标
         double 反洗到MBR中转X = 880;
         
-        // 1#反洗泵 → MBR：水平向左 → 垂直向下
-        AddOrtho3(反洗泵1_左, new Point(反洗到MBR中转X, 230), new Point(反洗到MBR中转X, 420), FlowLineType.Backwash);
-        AddOrtho(new Point(反洗到MBR中转X, 420), MBR_上, FlowLineType.Backwash);
+        // 1#反洗泵 → MBR：水平向左 → 垂直向下（修改：去掉最后的水平连接，直接垂直向下）
+        AddOrtho(反洗泵1_左, new Point(855, 230), FlowLineType.Backwash);
+        AddOrtho(new Point(855, 230), MBR_上, FlowLineType.Backwash);
         
-        // 2#反洗泵 → MBR：水平向左 → 垂直向下
-        AddOrtho3(反洗泵2_左, new Point(反洗到MBR中转X, 310), new Point(反洗到MBR中转X, 420), FlowLineType.Backwash);
-        AddOrtho(new Point(反洗到MBR中转X, 420), MBR_上, FlowLineType.Backwash);
+        // 2#反洗泵 → MBR：水平向左 → 垂直向下（修改：去掉最后的水平连接，直接垂直向下）
+        AddOrtho(反洗泵2_左, new Point(855, 310), FlowLineType.Backwash);
+        AddOrtho(new Point(855, 310), MBR_上, FlowLineType.Backwash);
         
         // ========== 产水泵连接 ==========
         var MBR_右 = new Point(930, 470);
@@ -498,13 +498,13 @@ public static class FlowchartDataProvider
         // 统一中转X坐标
         double 鼓风机中转X = 820;
         
-        // 1#鼓风机 → MBR：水平向右 → 垂直向下
-        AddOrtho3(鼓风机1_右, new Point(鼓风机中转X, 100), new Point(鼓风机中转X, 420), FlowLineType.Aeration);
-        AddOrtho(new Point(鼓风机中转X, 420), MBR_上, FlowLineType.Aeration);
+        // 1#鼓风机 → MBR：水平向右 → 垂直向下（修改：去掉最后的水平连接，直接垂直向下）
+        AddOrtho(鼓风机1_右, new Point(855, 100), FlowLineType.Aeration);
+        AddOrtho(new Point(855, 100), MBR_上, FlowLineType.Aeration);
         
-        // 2#鼓风机 → MBR：水平向右 → 垂直向下
-        AddOrtho3(鼓风机2_右, new Point(鼓风机中转X, 180), new Point(鼓风机中转X, 420), FlowLineType.Aeration);
-        AddOrtho(new Point(鼓风机中转X, 420), MBR_上, FlowLineType.Aeration);
+        // 2#鼓风机 → MBR：水平向右 → 垂直向下（修改：去掉最后的水平连接，直接垂直向下）
+        AddOrtho(鼓风机2_右, new Point(855, 180), FlowLineType.Aeration);
+        AddOrtho(new Point(855, 180), MBR_上, FlowLineType.Aeration);
         
         // ========== 加药装置连接线（绿色虚线）==========
         // 加药装置下边点
