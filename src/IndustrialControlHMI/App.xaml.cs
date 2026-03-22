@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using IndustrialControlHMI.Infrastructure;
 using IndustrialControlHMI.Services;
 using IndustrialControlHMI.Services.Communication;
+using IndustrialControlHMI.Services.Database;
+using IndustrialControlHMI.Services.S7;
 using IndustrialControlHMI.ViewModels;
 
 namespace IndustrialControlHMI;
@@ -29,9 +31,9 @@ public partial class App : Application
         ConfigureServices(services);
         ServiceProvider = services.BuildServiceProvider();
 
-        // 确保数据库已创建
         var dbContext = ServiceProvider.GetRequiredService<AppDbContext>();
         dbContext.EnsureDatabaseCreated();
+        ZhongxinSewageDatabaseInitializer.Initialize(dbContext);
 
         // 创建主窗口并显示
         var mainWindow = new MainWindow
@@ -56,12 +58,11 @@ public partial class App : Application
         // Modbus服务
         services.AddSingleton<IModbusService, ModbusService>();
 
-        // 数据库上下文（使用单例，因为SQLite内存数据库需要共享连接）
         services.AddSingleton<AppDbContext>();
 
-        // 存储库
         services.AddSingleton<IAlarmRepository, AlarmRepository>();
         services.AddSingleton<ISettingRepository, SettingRepository>();
+        services.AddSingleton<IPointHistoryRepository, PointHistoryRepository>();
 
         // 设置管理器
         services.AddSingleton<ISettingsManager, SettingsManager>();
@@ -75,8 +76,12 @@ public partial class App : Application
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<FlowchartViewModel>();
         services.AddTransient<CommunicationViewModel>();
+        services.AddTransient<S7MonitorViewModel>();
         
         // 流程图相关服务
         services.AddSingleton<PlcDataBindingService>();
+
+        // 西门子 S7（中信污水点位表）
+        services.AddSingleton<IS7RuntimeService, S7RuntimeService>();
     }
 }

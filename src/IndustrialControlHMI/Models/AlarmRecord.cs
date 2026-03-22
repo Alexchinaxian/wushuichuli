@@ -13,6 +13,11 @@ namespace IndustrialControlHMI.Models
         public int Id { get; set; }
 
         /// <summary>
+        /// 可选：关联点位映射表主键（中信污水库 PointMappings）。
+        /// </summary>
+        public long? PointMappingId { get; set; }
+
+        /// <summary>
         /// 报警参数名称。
         /// </summary>
         public string ParameterName { get; set; } = string.Empty;

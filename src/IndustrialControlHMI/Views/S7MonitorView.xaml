@@ -1,0 +1,380 @@
+<UserControl x:Class="IndustrialControlHMI.Views.S7MonitorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:IndustrialControlHMI.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="960"
+             FontFamily="Segoe UI, Microsoft YaHei UI, Microsoft YaHei, sans-serif">
+    <UserControl.Resources>
+        <converters:PlcValueDisplayConverter x:Key="PlcValueDisplayConverter"/>
+
+        <Style x:Key="S7ColumnHeader" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#0F2342"/>
+            <Setter Property="Foreground" Value="#B8C5D6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="BorderBrush" Value="#1A3A6A"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+
+        <Style x:Key="S7Cell" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#E8EEF5"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+
+        <Style x:Key="S7AddrCell" TargetType="TextBlock" BasedOn="{StaticResource S7Cell}">
+            <Setter Property="FontFamily" Value="Consolas, Cascadia Mono, Microsoft YaHei UI"/>
+            <Setter Property="Foreground" Value="#7DD3FC"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="12,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,0">
+            <TextBlock Text="S7 点位监控"
+                       FontSize="20" FontWeight="SemiBold" Foreground="White"/>
+            <TextBlock Text="中信国际污水 · 西门子 S7-200 SMART · 故障 / 数值 / 控制分栏 · 可筛选"
+                       FontSize="12" Foreground="#8E9AAF" Margin="0,6,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Background="#152A4F" CornerRadius="8" Padding="14,12" Margin="0,14,0,0"
+                BorderBrush="#1A3A6A" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <WrapPanel Grid.Row="0" Orientation="Horizontal">
+                    <TextBlock Text="PLC IP" Foreground="#9CA8B8" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox Text="{Binding PlcIp, UpdateSourceTrigger=PropertyChanged}"
+                             Width="150" Height="30" Padding="8,4" Margin="0,0,12,8"
+                             VerticalContentAlignment="Center"
+                             Background="#0A1628" Foreground="White" BorderBrush="#2A4A7A" BorderThickness="1"/>
+                    <Button Content="连接并轮询" Command="{Binding ConnectCommand}" Padding="16,8" Margin="0,0,8,8"
+                            Background="#00A8FF" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    <Button Content="断开" Command="{Binding DisconnectCommand}" Padding="16,8" Margin="0,0,8,8"
+                            Background="#3A4556" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    <Button Content="重新加载点位表" Command="{Binding ReloadPointTableCommand}" Padding="16,8" Margin="0,0,16,8"
+                            Background="#2D3F5C" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    <CheckBox Content="启用液位自动控制 (Q0.0)" IsChecked="{Binding AutomationEnabled}"
+                              Foreground="#DDE4EE" VerticalAlignment="Center" Margin="0,0,0,8"
+                              ToolTip="依据 VDF100 / VDF114 / VDF118；与 PLC 逻辑冲突时请勿勾选"/>
+                </WrapPanel>
+                <DockPanel Grid.Row="1" LastChildFill="True">
+                    <TextBlock DockPanel.Dock="Left" Text="{Binding PointCountLabel}" Foreground="#00D4AA"
+                               VerticalAlignment="Center" Margin="0,0,16,0" FontSize="12"/>
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding StatusText}" Foreground="#5EB8FF"
+                               VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="420" FontSize="12"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="筛选" Foreground="#9CA8B8" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox Grid.Column="1" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="32" Padding="10,6"
+                                 Background="#0A1628" Foreground="White" BorderBrush="#2A4A7A"
+                                 ToolTip="按变量名、地址或类型关键字过滤"/>
+                    </Grid>
+                </DockPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="220"/>
+                <ColumnDefinition Width="6"/>
+                <ColumnDefinition Width="1.35*" MinWidth="260"/>
+                <ColumnDefinition Width="6"/>
+                <ColumnDefinition Width="*" MinWidth="200"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 故障 -->
+            <Border Grid.Column="0" Background="#0A1628" CornerRadius="8"
+                    BorderBrush="#5A3048" BorderThickness="1" Padding="0,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="故障" FontSize="14" FontWeight="SemiBold" Foreground="#FDA4AF"
+                               Padding="12,10,12,6"/>
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding FaultPoints}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              CanUserResizeRows="False"
+                              SelectionMode="Single"
+                              HeadersVisibility="Column"
+                              RowHeight="40"
+                              Background="Transparent"
+                              Foreground="#E8EEF5"
+                              BorderThickness="0"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#1F3555"
+                              AlternationCount="2"
+                              RowBackground="#0E1A2E"
+                              AlternatingRowBackground="#121E35"
+                              ScrollViewer.CanContentScroll="True"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style BasedOn="{StaticResource S7ColumnHeader}" TargetType="DataGridColumnHeader"/>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="变量名" Width="*" MinWidth="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7Cell}" Text="{Binding VariableName}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="地址" Width="88">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7AddrCell}" Text="{Binding RegisterAddress}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="当前值" Width="72">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7Cell}"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#A5F3FC"
+                                                   Text="{Binding CurrentValue, Converter={StaticResource PlcValueDisplayConverter}}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="状态" Width="56">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,8">
+                                            <Ellipse Width="12" Height="12">
+                                                <Ellipse.Style>
+                                                    <Style TargetType="Ellipse">
+                                                        <Setter Property="Fill" Value="#334155"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsAlarm}" Value="True">
+                                                                <Setter Property="Fill" Value="#F43F5E"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Ellipse.Style>
+                                            </Ellipse>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1" Width="6" HorizontalAlignment="Stretch"
+                          Background="#243652" ShowsPreview="False"/>
+
+            <!-- 数值 / 过程量 -->
+            <Border Grid.Column="2" Background="#0A1628" CornerRadius="8"
+                    BorderBrush="#1A5A52" BorderThickness="1" Padding="0,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="数值 / 过程量" FontSize="14" FontWeight="SemiBold" Foreground="#5EEAD4"
+                               Padding="12,10,12,6"/>
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding ValuePoints}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              CanUserResizeRows="False"
+                              SelectionMode="Single"
+                              HeadersVisibility="Column"
+                              RowHeight="40"
+                              Background="Transparent"
+                              Foreground="#E8EEF5"
+                              BorderThickness="0"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#1F3555"
+                              AlternationCount="2"
+                              RowBackground="#0E1A2E"
+                              AlternatingRowBackground="#121E35"
+                              ScrollViewer.CanContentScroll="True"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style BasedOn="{StaticResource S7ColumnHeader}" TargetType="DataGridColumnHeader"/>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="类型" Width="108" CanUserResize="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="4" Padding="8,4" Margin="8,4,4,4" HorizontalAlignment="Left">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#2A3F5C"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Purpose}" Value="液位数据">
+                                                            <Setter Property="Background" Value="#1E4D4A"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Purpose}" Value="流量数据">
+                                                            <Setter Property="Background" Value="#1E3D5A"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Purpose}" Value="内部继电器">
+                                                            <Setter Property="Background" Value="#3A3548"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Purpose}" Value="定时参数">
+                                                            <Setter Property="Background" Value="#4A3D28"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Purpose}" Foreground="#F0F4F8" FontSize="12"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="变量名" Width="2*" MinWidth="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7Cell}" Text="{Binding VariableName}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="地址" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7AddrCell}" Text="{Binding RegisterAddress}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="当前值" Width="110">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7Cell}"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#A5F3FC"
+                                                   Text="{Binding CurrentValue, Converter={StaticResource PlcValueDisplayConverter}}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="更新时间" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7Cell}"
+                                                   Foreground="#94A3B8"
+                                                   FontSize="12"
+                                                   Text="{Binding LastUpdated, StringFormat=HH:mm:ss.fff}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="3" Width="6" HorizontalAlignment="Stretch"
+                          Background="#243652" ShowsPreview="False"/>
+
+            <!-- 控制输出 -->
+            <Border Grid.Column="4" Background="#0A1628" CornerRadius="8"
+                    BorderBrush="#4A5A28" BorderThickness="1" Padding="0,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="控制输出" FontSize="14" FontWeight="SemiBold" Foreground="#BEF264"
+                               Padding="12,10,12,6"/>
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding ControlPoints}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              CanUserResizeRows="False"
+                              SelectionMode="Single"
+                              HeadersVisibility="Column"
+                              RowHeight="40"
+                              Background="Transparent"
+                              Foreground="#E8EEF5"
+                              BorderThickness="0"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#1F3555"
+                              AlternationCount="2"
+                              RowBackground="#0E1A2E"
+                              AlternatingRowBackground="#121E35"
+                              ScrollViewer.CanContentScroll="True"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style BasedOn="{StaticResource S7ColumnHeader}" TargetType="DataGridColumnHeader"/>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="变量名" Width="2*" MinWidth="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7Cell}" Text="{Binding VariableName}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="地址" Width="88">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7AddrCell}" Text="{Binding RegisterAddress}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="当前值" Width="72">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7Cell}"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#D9F99D"
+                                                   Text="{Binding CurrentValue, Converter={StaticResource PlcValueDisplayConverter}}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="更新时间" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource S7Cell}"
+                                                   Foreground="#94A3B8"
+                                                   FontSize="12"
+                                                   Text="{Binding LastUpdated, StringFormat=HH:mm:ss.fff}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

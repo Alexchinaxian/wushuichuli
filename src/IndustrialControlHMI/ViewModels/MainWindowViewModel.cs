@@ -346,6 +346,25 @@ namespace IndustrialControlHMI.ViewModels
                 CurrentViewModel = null;
             }
         }
+
+        /// <summary>
+        /// 导航到 S7 监控（中信污水 PLC 点位轮询与报警）。
+        /// </summary>
+        [RelayCommand]
+        private async Task NavigateToS7MonitorAsync()
+        {
+            try
+            {
+                var vm = _serviceProvider.GetRequiredService<S7MonitorViewModel>();
+                CurrentViewModel = vm;
+                await Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"打开 S7 监控失败: {ex.Message}");
+                CurrentViewModel = null;
+            }
+        }
         
         /// <summary>
         /// 定时器触发更新。

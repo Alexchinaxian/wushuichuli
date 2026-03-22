@@ -76,6 +76,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- 左侧: 应用程序标题 -->
@@ -93,7 +94,8 @@
 
                 <!-- 右侧: 连接状态 -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" 
-                           HorizontalAlignment="Right" Margin="0,0,20,0">
+                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                           Margin="0,0,12,0">
                     <TextBlock Text="PLC连接:" Foreground="White" 
                                VerticalAlignment="Center" FontSize="12"/>
                     <Ellipse Width="12" Height="12" Margin="5,0,10,0" 
@@ -105,6 +107,38 @@
                     <TextBlock Text="{Binding PlcIpAddress}" Foreground="#CCCCCC" 
                                VerticalAlignment="Center" FontSize="12"/>
                 </StackPanel>
+
+                <!-- 右上角: 关闭 -->
+                <Button Grid.Column="3"
+                        Width="46" Height="32"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        ToolTip="关闭"
+                        VerticalAlignment="Center"
+                        Margin="0,0,4,0"
+                        Click="CloseWindow_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bg" Background="Transparent" CornerRadius="2">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bg" Property="Background" Value="#E81123"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="bg" Property="Background" Value="#C50F1F"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <TextBlock Text="&#xE8BB;"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="11"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
+                </Button>
             </Grid>
         </Border>
 
@@ -192,6 +226,16 @@
                             <TextBlock Text="" FontFamily="Segoe MDL2 Assets" 
                                        FontSize="18" Foreground="White"/>
                             <TextBlock Text="参数设置" FontSize="12" Foreground="White" 
+                                       Margin="15,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource NavigationButtonStyle}" 
+                           Command="{Binding NavigateToS7MonitorCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="" FontFamily="Segoe MDL2 Assets" 
+                                       FontSize="18" Foreground="White"/>
+                            <TextBlock Text="S7监控" FontSize="12" Foreground="White" 
                                        Margin="15,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>

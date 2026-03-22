@@ -238,5 +238,8 @@
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
             <views:SettingsView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:S7MonitorViewModel}">
+            <views:S7MonitorView/>
+        </DataTemplate>
     </Application.Resources>
 </Application>
