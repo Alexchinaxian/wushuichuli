@@ -198,24 +198,23 @@
                 </StackPanel>
             </Border>
 
-            <!-- 中间主内容区域 - 已替换为工艺流程图 -->
+            <!-- 中间主内容：仪表板=流程图；参数设置/报警等=CurrentViewModel 对应视图 -->
             <Grid Grid.Column="1" Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <!-- 流程图区域 -->
                 </Grid.RowDefinitions>
 
-                <!-- 流程图区域 -->
+                <!-- 仪表板：工艺流程图（CurrentViewModel 为空时显示） -->
                 <Border Grid.Row="0" Background="#152A4F" CornerRadius="5"
                        BorderThickness="1" BorderBrush="#1A3A6A"
-                       Effect="{StaticResource CardShadow}">
+                       Effect="{StaticResource CardShadow}"
+                       Visibility="{Binding CurrentViewModel, Converter={StaticResource ObjectToVisibilityConverter}}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <!-- 流程图标题 -->
                         <Border Grid.Row="0" Background="#00A8FF"
                                CornerRadius="5,5,0,0" Padding="10,5">
                             <TextBlock Text="MBR污水处理工艺流程可视化"
@@ -234,12 +233,16 @@
                             </TextBlock>
                         </Border>
 
-                        <!-- WPF原生流程图容器 -->
                         <Border Grid.Row="1" Margin="0" Background="Transparent">
                             <views:FlowchartView DataContext="{Binding FlowchartViewModel}"/>
                         </Border>
                     </Grid>
                 </Border>
+
+                <!-- 参数设置（含 PLC/Modbus 连接）、报警管理等 -->
+                <ContentControl Grid.Row="0"
+                                Content="{Binding CurrentViewModel}"
+                                Visibility="{Binding CurrentViewModel, Converter={StaticResource ObjectToVisibilityConverter}, ConverterParameter=Inverse}"/>
             </Grid>
 
             <!-- 右侧面板 -->

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Media;
 using System.Threading.Tasks;
 using System.Timers;
@@ -333,7 +334,10 @@ namespace IndustrialControlHMI.ViewModels
             try
             {
                 var settingsViewModel = _serviceProvider.GetRequiredService<SettingsViewModel>();
-                // SettingsViewModel 构造函数已加载设置，无需额外初始化
+                // 进入参数设置时默认展示「通信设置」/ PLC（Modbus）连接配置
+                var comm = settingsViewModel.Categories.FirstOrDefault(c => c.Id == "communication");
+                if (comm != null)
+                    settingsViewModel.SelectedCategory = comm;
                 CurrentViewModel = settingsViewModel;
             }
             catch (Exception ex)
