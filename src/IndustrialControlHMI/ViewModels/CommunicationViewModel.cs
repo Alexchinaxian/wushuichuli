@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.IO;
 using System;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
