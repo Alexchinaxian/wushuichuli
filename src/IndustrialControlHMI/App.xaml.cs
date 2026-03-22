@@ -46,6 +46,9 @@ public partial class App : Application
     /// <param name="services">服务集合。</param>
     private void ConfigureServices(IServiceCollection services)
     {
+        // 配置管理
+        services.AddSingleton<IConfigurationManager, ConfigurationManager>();
+        
         // Modbus配置
         services.AddSingleton<IModbusConfig, DefaultModbusConfig>();
 

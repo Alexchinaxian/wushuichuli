@@ -40,8 +40,6 @@ public partial class MainWindow : Window
         }
     }
 
-    private void FlowchartView_Loaded(object sender, RoutedEventArgs e)
-    {
-
-    }
+    // FlowchartView加载事件处理 - 已移除空实现
+    // 如果需要添加加载完成后的逻辑，可以在这里添加
 }

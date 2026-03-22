@@ -236,7 +236,7 @@
 
                         <!-- WPF原生流程图容器 -->
                         <Border Grid.Row="1" Margin="0" Background="Transparent">
-                            <views:FlowchartView DataContext="{Binding FlowchartViewModel}" Loaded="FlowchartView_Loaded"/>
+                            <views:FlowchartView DataContext="{Binding FlowchartViewModel}"/>
                         </Border>
                     </Grid>
                 </Border>
