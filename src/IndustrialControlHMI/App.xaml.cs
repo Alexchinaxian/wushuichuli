@@ -2,6 +2,7 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using IndustrialControlHMI.Infrastructure;
 using IndustrialControlHMI.Services;
+using IndustrialControlHMI.Services.Communication;
 using IndustrialControlHMI.ViewModels;
 
 namespace IndustrialControlHMI;
@@ -65,11 +66,15 @@ public partial class App : Application
         // 设置管理器
         services.AddSingleton<ISettingsManager, SettingsManager>();
 
+        // 通讯服务
+        services.AddCommunicationServices();
+
         // 视图模型
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<AlarmManagementViewModel>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<FlowchartViewModel>();
+        services.AddTransient<CommunicationViewModel>();
         
         // 流程图相关服务
         services.AddSingleton<PlcDataBindingService>();

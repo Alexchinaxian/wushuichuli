@@ -1,0 +1,52 @@
+{
+  "Communication": {
+    "Protocols": [
+      {
+        "ProtocolId": "ModbusTCP_Default",
+        "ProtocolType": "ModbusTCP",
+        "InterfaceType": "Ethernet",
+        "DeviceAddress": "192.168.1.100",
+        "Port": 502,
+        "SlaveId": 1,
+        "Timeout": 5000,
+        "RetryCount": 3,
+        "AutoReconnect": true,
+        "ReconnectInterval": 5000,
+        "CustomSettings": {
+          "Description": "默认Modbus TCP配置",
+          "RegisterStartAddress": "40001",
+          "RegisterCount": "100"
+        }
+      },
+      {
+        "ProtocolId": "ModbusRTU_Default",
+        "ProtocolType": "ModbusRTU",
+        "InterfaceType": "Serial",
+        "DeviceAddress": "COM1",
+        "BaudRate": 9600,
+        "DataBits": 8,
+        "Parity": "None",
+        "StopBits": "One",
+        "SlaveId": 1,
+        "Timeout": 5000,
+        "RetryCount": 3,
+        "AutoReconnect": true,
+        "ReconnectInterval": 5000,
+        "CustomSettings": {
+          "Description": "默认Modbus RTU配置",
+          "RegisterStartAddress": "40001",
+          "RegisterCount": "100"
+        }
+      }
+    ],
+    "DefaultSettings": {
+      "Timeout": 5000,
+      "RetryCount": 3,
+      "AutoReconnect": true,
+      "ReconnectInterval": 5000,
+      "LogLevel": "Info",
+      "EnableDataLogging": true,
+      "MaxLogSizeMB": 100
+    }
+  }
+}
