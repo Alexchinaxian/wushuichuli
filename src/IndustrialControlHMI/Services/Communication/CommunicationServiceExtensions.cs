@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using System.IO.Ports;
 
 namespace IndustrialControlHMI.Services.Communication
 {

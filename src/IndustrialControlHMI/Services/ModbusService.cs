@@ -66,7 +66,7 @@ namespace IndustrialControlHMI.Services
         public bool IsConnected { get; }
         public string Message { get; }
         
-        public ConnectionStatusChangedEventArgs(bool isConnected, string message = null)
+        public ConnectionStatusChangedEventArgs(bool isConnected, string? message = null)
         {
             IsConnected = isConnected;
             Message = message;
@@ -98,7 +98,7 @@ namespace IndustrialControlHMI.Services
         public string ErrorMessage { get; }
         public Exception Exception { get; }
         
-        public ErrorOccurredEventArgs(string errorMessage, Exception exception = null)
+        public ErrorOccurredEventArgs(string errorMessage, Exception? exception = null)
         {
             ErrorMessage = errorMessage;
             Exception = exception;
