@@ -5,6 +5,7 @@
 [Oo]bj/
 [Oo]ut/
 [Bb]uild/
+artifacts/
 *.exe
 *.dll
 *.pdb
