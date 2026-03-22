@@ -96,12 +96,13 @@ public static class FlowchartDataProvider
         // ========== 第1列: 格栅机 (左侧) ==========
         // 微调格栅机Y位置，使右边点(140,470)与调节池左边点(200,470)在同一水平线，连线不弯折
         AddUnit("IiDKO4wh8ftm1ieObsXz-11", "格栅机", 40, 430, 100, 80, "Equipment");
+        
         AddUnit("IiDKO4wh8ftm1ieObsXz-6", "除臭设备", 40, 10, 100, 80, "ProcessUnit");
-        AddUnit("h1sOd0kz_K9NjbGk3U_x-22", "自来水补水", 40, 150, 100, 80, "Valve");
+        AddUnit("h1sOd0kz_K9NjbGk3U_x-22", "自来水补水", 40, 150, 100, 80, "ProcessUnit");  // 改为蓝色
         AddUnit("IiDKO4wh8ftm1ieObsXz-10", "电磁阀", 40, 290, 100, 80, "Valve");
 
         // ========== 第2列: 调节池 + 提升泵 ==========
-        AddUnit("IiDKO4wh8ftm1ieObsXz-12", "调节池", 200, 420, 150, 100, "ProcessUnit", "液位", "75%");
+        AddUnit("IiDKO4wh8ftm1ieObsXz-12", "调节池", 200, 420, 150, 100, "ProcessUnit", "液位", "75%");  // 改为蓝色，保留水位指示灯
         // 调整提升泵Y位置，使连线点居中对称
         // 1#提升泵中心Y=430，左边点Y=470与调节池右边点对齐
         AddUnit("IiDKO4wh8ftm1ieObsXz-17", "1#提升泵", 410, 390, 100, 80, "Equipment");
@@ -114,15 +115,15 @@ public static class FlowchartDataProvider
         AddUnit("IiDKO4wh8ftm1ieObsXz-16", "加药装置", 350, 170, 200, 80, "ProcessUnit");
 
         // ========== 第4列: 缺氧池 ==========
-        AddUnit("IiDKO4wh8ftm1ieObsXz-20", "缺氧池", 570, 420, 150, 100, "ProcessUnit", "液位", "75%");
-        AddUnit("h1sOd0kz_K9NjbGk3U_x-3", "搅拌机", 620, 270, 100, 80, "Equipment"); // 右移50像素，避免干扰走线
+        AddUnit("IiDKO4wh8ftm1ieObsXz-20", "缺氧池", 570, 420, 150, 100, "ProcessUnit", "液位", "75%");  // 改为蓝色，保留水位指示灯
+        AddUnit("h1sOd0kz_K9NjbGk3U_x-3", "搅拌机", 680, 270, 100, 80, "Equipment"); // 向右移动60像素，与鼓风机对齐
 
         // ========== 第5列: MBR膜池 + 鼓风机 ==========
-        AddUnit("h1sOd0kz_K9NjbGk3U_x-4", "MBR膜池", 780, 420, 150, 100, "ProcessUnit", "液位", "75%");
+        AddUnit("h1sOd0kz_K9NjbGk3U_x-4", "MBR膜池", 780, 420, 150, 100, "ProcessUnit", "液位", "75%");  // 改为蓝色，保留水位指示灯
         AddUnit("h1sOd0kz_K9NjbGk3U_x-1", "1#鼓风机", 680, 60, 100, 80, "Equipment");
         AddUnit("h1sOd0kz_K9NjbGk3U_x-2", "2#鼓风机", 680, 140, 100, 80, "Equipment");
-        AddUnit("h1sOd0kz_K9NjbGk3U_x-5", "1#回流泵", 760, 540, 100, 80, "Equipment");
-        AddUnit("h1sOd0kz_K9NjbGk3U_x-6", "2#回流泵", 760, 620, 100, 80, "Equipment");
+        AddUnit("h1sOd0kz_K9NjbGk3U_x-5", "1#回流泵", 720, 540, 100, 80, "Equipment");  // 向左移动40像素
+        AddUnit("h1sOd0kz_K9NjbGk3U_x-6", "2#回流泵", 720, 620, 100, 80, "Equipment");  // 向左移动40像素
 
         // ========== 第6列: 反洗设备 + 产水泵 ==========
         AddUnit("h1sOd0kz_K9NjbGk3U_x-7", "反洗罐", 940, 60, 120, 80, "Equipment");
@@ -135,8 +136,8 @@ public static class FlowchartDataProvider
         AddUnit("h1sOd0kz_K9NjbGk3U_x-10", "2#产水泵", 990, 490, 100, 80, "Equipment");
 
         // ========== 第7列: 中间水池 ==========
-        AddUnit("h1sOd0kz_K9NjbGk3U_x-13", "中间水池", 1150, 420, 150, 100, "ProcessUnit", "液位", "75%");
-        AddUnit("IiDKO4wh8ftm1ieObsXz-9", "自来水补水", 1100, 150, 100, 80, "Valve");
+        AddUnit("h1sOd0kz_K9NjbGk3U_x-13", "中间水池", 1150, 420, 150, 100, "ProcessUnit", "液位", "75%");  // 改为蓝色，保留水位指示灯
+        AddUnit("IiDKO4wh8ftm1ieObsXz-9", "自来水补水", 1100, 150, 100, 80, "ProcessUnit");  // 改为蓝色
         AddUnit("h1sOd0kz_K9NjbGk3U_x-12", "电磁阀", 1100, 290, 100, 80, "Valve");
         AddUnit("h1sOd0kz_K9NjbGk3U_x-14", "1#回用泵", 1150, 550, 100, 80, "Equipment");
         AddUnit("h1sOd0kz_K9NjbGk3U_x-15", "2#回用泵", 1150, 630, 100, 80, "Equipment");
@@ -146,7 +147,7 @@ public static class FlowchartDataProvider
         // ========== 第8列: 加药装置(右) + 至用水单元 ==========
         AddUnit("h1sOd0kz_K9NjbGk3U_x-46", "次氯酸钠", 1240, 210, 100, 80, "Equipment");
         AddUnit("h1sOd0kz_K9NjbGk3U_x-47", "加药装置", 1240, 290, 100, 80, "ProcessUnit");
-        AddUnit("h1sOd0kz_K9NjbGk3U_x-55", "至用水单元", 1000, 710, 100, 80, "Equipment");
+        AddUnit("h1sOd0kz_K9NjbGk3U_x-55", "至用水单元", 1000, 710, 100, 80, "ProcessUnit", "液位", "75%");  // 改为蓝色，需要水位指示灯
 
         System.Diagnostics.Debug.WriteLine($"[流程图数据] 总共创建单元数: {units.Count}");
         return units;
@@ -178,6 +179,7 @@ public static class FlowchartDataProvider
         // ========== 第1列 ==========
         // 格栅机连接点更新: Y位置从420改为430，右边点Y从460改为470，与调节池左边点对齐
         ["IiDKO4wh8ftm1ieObsXz-11"] = new() { ["top"] = new Point(90, 430), ["right"] = new Point(140, 470), ["bottom"] = new Point(90, 510), ["left"] = new Point(40, 470) }, // 格栅机
+        
         ["IiDKO4wh8ftm1ieObsXz-6"] = new() { ["top"] = new Point(90, 10), ["right"] = new Point(140, 50), ["bottom"] = new Point(90, 90), ["left"] = new Point(40, 50) }, // 除臭设备
         ["h1sOd0kz_K9NjbGk3U_x-22"] = new() { ["top"] = new Point(90, 150), ["right"] = new Point(140, 190), ["bottom"] = new Point(90, 230), ["left"] = new Point(40, 190) }, // 自来水补水
         ["IiDKO4wh8ftm1ieObsXz-10"] = new() { ["top"] = new Point(90, 290), ["right"] = new Point(140, 330), ["bottom"] = new Point(90, 370), ["left"] = new Point(40, 330) }, // 电磁阀
@@ -196,14 +198,14 @@ public static class FlowchartDataProvider
         
         // ========== 第4列 ==========
         ["IiDKO4wh8ftm1ieObsXz-20"] = new() { ["top"] = new Point(645, 420), ["right"] = new Point(720, 470), ["bottom"] = new Point(645, 520), ["left"] = new Point(570, 470) }, // 缺氧池
-        ["h1sOd0kz_K9NjbGk3U_x-3"] = new() { ["top"] = new Point(670, 270), ["right"] = new Point(720, 310), ["bottom"] = new Point(670, 350), ["left"] = new Point(620, 310) }, // 搅拌机（右移50像素）
+        ["h1sOd0kz_K9NjbGk3U_x-3"] = new() { ["top"] = new Point(730, 270), ["right"] = new Point(780, 310), ["bottom"] = new Point(730, 350), ["left"] = new Point(680, 310) }, // 搅拌机（向右移动60像素，与鼓风机对齐）
         
         // ========== 第5列 ==========
         ["h1sOd0kz_K9NjbGk3U_x-4"] = new() { ["top"] = new Point(855, 420), ["right"] = new Point(930, 470), ["bottom"] = new Point(855, 520), ["left"] = new Point(780, 470) }, // MBR膜池
         ["h1sOd0kz_K9NjbGk3U_x-1"] = new() { ["top"] = new Point(730, 60), ["right"] = new Point(780, 100), ["bottom"] = new Point(730, 140), ["left"] = new Point(680, 100) }, // 1#鼓风机
         ["h1sOd0kz_K9NjbGk3U_x-2"] = new() { ["top"] = new Point(730, 140), ["right"] = new Point(780, 180), ["bottom"] = new Point(730, 220), ["left"] = new Point(680, 180) }, // 2#鼓风机
-        ["h1sOd0kz_K9NjbGk3U_x-5"] = new() { ["top"] = new Point(810, 540), ["right"] = new Point(860, 580), ["bottom"] = new Point(810, 620), ["left"] = new Point(760, 580) }, // 1#回流泵
-        ["h1sOd0kz_K9NjbGk3U_x-6"] = new() { ["top"] = new Point(810, 620), ["right"] = new Point(860, 660), ["bottom"] = new Point(810, 700), ["left"] = new Point(760, 660) }, // 2#回流泵
+        ["h1sOd0kz_K9NjbGk3U_x-5"] = new() { ["top"] = new Point(770, 540), ["right"] = new Point(820, 580), ["bottom"] = new Point(770, 620), ["left"] = new Point(720, 580) }, // 1#回流泵（向左移动40像素）
+        ["h1sOd0kz_K9NjbGk3U_x-6"] = new() { ["top"] = new Point(770, 620), ["right"] = new Point(820, 660), ["bottom"] = new Point(770, 700), ["left"] = new Point(720, 660) }, // 2#回流泵（向左移动40像素）
         
         // ========== 第6列 ==========
         ["h1sOd0kz_K9NjbGk3U_x-7"] = new() { ["top"] = new Point(1000, 60), ["right"] = new Point(1060, 100), ["bottom"] = new Point(1000, 140), ["left"] = new Point(940, 100) }, // 反洗罐
@@ -291,20 +293,27 @@ public static class FlowchartDataProvider
         AddOrtho(new Point(调节池_中心点.X, 50), 调节池_中心点, FlowLineType.Deodorization, true);    // 垂直线
         
         // 其他除臭设备连接线保持不变（如果需要连接其他设备）
-        var 缺氧池_上 = new Point(645, 420);
-        var MBR膜池_上 = new Point(855, 420);
+        // 缺氧池连接点（像调节池一样处理）
+        var 缺氧池_中心点 = new Point(645, 420);  // 中心点（原缺氧池_上）
+        var 缺氧池_上边点 = new Point(645, 370);  // 上边点（距离中心点向上50像素）
+        var 缺氧池_左边点 = new Point(625, 420);  // 左边点（距离中心点向左20像素）
+        var 缺氧池_右边点 = new Point(665, 420);  // 右边点（距离中心点向右20像素）
+        // MBR膜池连接点（像调节池一样处理）
+        var MBR膜池_中心点 = new Point(855, 420);  // 中心点（原MBR膜池_上）
+        var MBR膜池_左边点 = new Point(835, 420);  // 左边点（距离中心点向左20像素）
+        var MBR膜池_右边点 = new Point(875, 420);  // 右边点（距离中心点向右20像素）
         
         // 公共绕行路径：从除臭设备直接向右 → 再向下到目标
         // 水平绕行Y坐标（在设备下方，对齐到网格）
         double 水平绕行Y = 50;  // 保持与除臭设备右边点同一高度，对齐到网格
         
-        // 除臭设备 → 缺氧池（水平向右，然后垂直向下）
-        AddOrtho(除臭设备_右, new Point(缺氧池_上.X, 水平绕行Y), FlowLineType.Deodorization, true);
-        AddOrtho(new Point(缺氧池_上.X, 水平绕行Y), 缺氧池_上, FlowLineType.Deodorization, true);
+        // 除臭设备 → 缺氧池（水平向右，然后垂直向下）- 连接到中心点
+        AddOrtho(除臭设备_右, new Point(缺氧池_中心点.X, 水平绕行Y), FlowLineType.Deodorization, true);
+        AddOrtho(new Point(缺氧池_中心点.X, 水平绕行Y), 缺氧池_中心点, FlowLineType.Deodorization, true);
         
-        // 除臭设备 → MBR膜池（水平向右，然后垂直向下）
-        AddOrtho(除臭设备_右, new Point(MBR膜池_上.X, 水平绕行Y), FlowLineType.Deodorization, true);
-        AddOrtho(new Point(MBR膜池_上.X, 水平绕行Y), MBR膜池_上, FlowLineType.Deodorization, true);
+        // 除臭设备 → MBR膜池（水平向右，然后垂直向下）- 连接到中心点
+        AddOrtho(除臭设备_右, new Point(MBR膜池_中心点.X, 水平绕行Y), FlowLineType.Deodorization, true);
+        AddOrtho(new Point(MBR膜池_中心点.X, 水平绕行Y), MBR膜池_中心点, FlowLineType.Deodorization, true);
         
         // ========== 补水流程线（绿色实线）==========
         // 定义第1列左侧补水设备连接点
@@ -375,8 +384,8 @@ public static class FlowchartDataProvider
         
         // 缺氧池(下) → 1#回流泵(左) 和 2#回流泵(左)
         var 缺氧池_下 = new Point(645, 520);
-        var 回流泵1_左 = new Point(760, 580);
-        var 回流泵2_左 = new Point(760, 660);
+        var 回流泵1_左 = new Point(720, 580);  // 向左移动40像素
+        var 回流泵2_左 = new Point(720, 660);  // 向左移动40像素
         var MBR_下 = new Point(855, 520);
         
         // 缺氧池 → 1#回流泵：垂直 → 水平 → 垂直（整齐路径）
@@ -386,15 +395,23 @@ public static class FlowchartDataProvider
         AddOrtho3(缺氧池_下, new Point(645, 660), 回流泵2_左, FlowLineType.Reflux, true);
         
         // ========== 回流泵连接 ==========
-        // 1#回流泵(右) → MBR(下)：水平 → 垂直（统一出口位置）
-        var 回流泵1_右 = new Point(860, 580);
-        AddOrtho3(回流泵1_右, new Point(900, 580), new Point(900, 520), FlowLineType.Reflux, true);
-        AddOrtho(new Point(900, 520), MBR_下, FlowLineType.Reflux, true);
+        // 回流泵到MBR膜池：两条竖线合并成一条，横线优化
+        var 回流泵1_右 = new Point(820, 580);  // 向左移动40像素
+        var 回流泵2_右 = new Point(820, 660);  // 向左移动40像素
+        var MBR膜池_底部右边点 = new Point(875, 520);  // MBR底部右边点
         
-        // 2#回流泵(右) → MBR(下)：水平 → 垂直（统一出口位置）
-        var 回流泵2_右 = new Point(860, 660);
-        AddOrtho3(回流泵2_右, new Point(920, 660), new Point(920, 520), FlowLineType.Reflux, true);
-        AddOrtho(new Point(920, 520), MBR_下, FlowLineType.Reflux, true);
+        // 优化设计：共享一条竖线，横线不需要直接到特定点
+        double 回流泵共享竖线X = 850;  // 共享竖线的X坐标
+        
+        // 1#回流泵 → MBR：水平向右 → 垂直向下（共享竖线）
+        AddOrtho(回流泵1_右, new Point(回流泵共享竖线X, 580), FlowLineType.Reflux, true);
+        AddOrtho(new Point(回流泵共享竖线X, 580), new Point(回流泵共享竖线X, 520), FlowLineType.Reflux, true);
+        AddOrtho(new Point(回流泵共享竖线X, 520), MBR膜池_底部右边点, FlowLineType.Reflux, true);
+        
+        // 2#回流泵 → MBR：水平向右 → 垂直向下（共享竖线）
+        AddOrtho(回流泵2_右, new Point(回流泵共享竖线X, 660), FlowLineType.Reflux, true);
+        AddOrtho(new Point(回流泵共享竖线X, 660), new Point(回流泵共享竖线X, 520), FlowLineType.Reflux, true);
+        AddOrtho(new Point(回流泵共享竖线X, 520), MBR膜池_底部右边点, FlowLineType.Reflux, true);
         
         // ========== 反洗罐连接（蓝色虚线）==========
         // 反洗罐(右) → 1#反洗泵(右) 和 2#反洗泵(右)
@@ -414,24 +431,22 @@ public static class FlowchartDataProvider
         AddOrtho(new Point(反洗中转X, 310), 反洗泵2_右, FlowLineType.Backwash);
         
         // ========== 反洗泵 → MBR膜池连接（蓝色虚线）==========
-        // 1#反洗泵(左) → MBR膜池(上)：水平向左 → 垂直向下
+        // 两个反洗泵都是从左边点先水平移动，然后直接垂直向下到MBR膜池连接点
         var 反洗泵1_左 = new Point(900, 230);
         var 反洗泵2_左 = new Point(900, 310);
-        var MBR_上 = new Point(855, 420);
         
-        // 统一中转X坐标
-        double 反洗到MBR中转X = 880;
+        // 1#反洗泵 → MBR：先水平向左 → 再垂直向下到Y=420 → 再水平向左到MBR
+        // 从反洗泵左边点水平向左到X=880，然后垂直向下到Y=420，最后水平向左到MBR膜池右边点
+        AddOrtho(反洗泵1_左, new Point(880, 230), FlowLineType.Backwash);
+        AddOrtho3(new Point(880, 230), new Point(880, 420), MBR膜池_右边点, FlowLineType.Backwash);
         
-        // 1#反洗泵 → MBR：水平向左 → 垂直向下（修改：去掉最后的水平连接，直接垂直向下）
-        AddOrtho(反洗泵1_左, new Point(855, 230), FlowLineType.Backwash);
-        AddOrtho(new Point(855, 230), MBR_上, FlowLineType.Backwash);
-        
-        // 2#反洗泵 → MBR：水平向左 → 垂直向下（修改：去掉最后的水平连接，直接垂直向下）
-        AddOrtho(反洗泵2_左, new Point(855, 310), FlowLineType.Backwash);
-        AddOrtho(new Point(855, 310), MBR_上, FlowLineType.Backwash);
+        // 2#反洗泵 → MBR：先水平向左 → 再垂直向下到Y=420 → 再水平向左到MBR
+        // 从反洗泵左边点水平向左到X=880，然后垂直向下到Y=420，最后水平向左到MBR膜池右边点
+        AddOrtho(反洗泵2_左, new Point(880, 310), FlowLineType.Backwash);
+        AddOrtho3(new Point(880, 310), new Point(880, 420), MBR膜池_右边点, FlowLineType.Backwash);
         
         // ========== 产水泵连接 ==========
-        var MBR_右 = new Point(930, 470);
+        var MBR_右 = new Point(930, 470);  // MBR膜池右边中心点
         var 产水泵1_左 = new Point(990, 430);  // 1#产水泵左边点Y=430
         var 产水泵2_左 = new Point(990, 530);  // 2#产水泵左边点Y=530
         var 产水泵1_右 = new Point(1090, 430); // 1#产水泵右边点Y=430
@@ -455,7 +470,7 @@ public static class FlowchartDataProvider
         AddOrtho(new Point(1120, 470), 中间水池_左, FlowLineType.MainProcess);
         
         // ========== 回用泵连接 ==========
-        var 中间水池_下 = new Point(1225, 520);
+        var 中间水池_下 = new Point(1280, 520);  // 连接点再向右移动30像素，留出横线位置
         var 回用泵1_左 = new Point(1150, 590);
         var 回用泵2_左 = new Point(1150, 670);
         var 回用泵3_左 = new Point(1150, 750);
@@ -464,32 +479,40 @@ public static class FlowchartDataProvider
         var 回用泵3_右 = new Point(1250, 750);
         var 至用水单元_下 = new Point(1050, 790);
         var 至用水单元_左 = new Point(1000, 750);
+        var 至用水单元_右 = new Point(1100, 750);  // 至用水单元右边点
         
-        // 中间水池(下) → 各回用泵(左)：简洁的L形连接
-        // 1#回用泵：水平向左 → 垂直向上
-        AddOrtho(中间水池_下, new Point(回用泵1_左.X, 520), FlowLineType.MainProcess);
-        AddOrtho(new Point(回用泵1_左.X, 520), 回用泵1_左, FlowLineType.MainProcess);
+        // 中间水池(下) → 各回用泵(右)：一条竖线 + 三条横线设计（改进版）
+        // 从中间水池下点引出一条长竖线，然后从竖线的不同高度引出三条横线分别连接到三个回用泵
+        double 中间水池连接点X = 1280;  // 连接点X坐标
         
-        // 2#回用泵：水平向左 → 垂直向下
-        AddOrtho(中间水池_下, new Point(回用泵2_左.X, 520), FlowLineType.MainProcess);
-        AddOrtho(new Point(回用泵2_左.X, 520), 回用泵2_左, FlowLineType.MainProcess);
+        // 1. 一条长竖线：从中间水池下点垂直向下延伸到3#回用泵高度
+        AddOrtho(new Point(中间水池连接点X, 520), new Point(中间水池连接点X, 750), FlowLineType.MainProcess);
         
-        // 3#回用泵：水平向左 → 垂直向下
-        AddOrtho(中间水池_下, new Point(回用泵3_左.X, 520), FlowLineType.MainProcess);
-        AddOrtho(new Point(回用泵3_左.X, 520), 回用泵3_左, FlowLineType.MainProcess);
+        // 2. 三条横线：从竖线的不同高度分别水平向左直接连接到三个回用泵
+        // 1#回用泵：从竖线Y=590高度水平向左直接连接到回用泵右边点
+        AddOrtho(new Point(中间水池连接点X, 590), 回用泵1_右, FlowLineType.MainProcess);
         
-        // 回用泵 → 至用水单元：优化后的连线（用水单元已移到回用泵左侧）
+        // 2#回用泵：从竖线Y=670高度水平向左直接连接到回用泵右边点
+        AddOrtho(new Point(中间水池连接点X, 670), 回用泵2_右, FlowLineType.MainProcess);
         
-        // 1#回用泵(右) → 至用水单元(左)：水平向左 → 垂直向下（简洁的L形）
-        AddOrtho(回用泵1_右, new Point(至用水单元_左.X, 590), FlowLineType.MainProcess);
-        AddOrtho(new Point(至用水单元_左.X, 590), 至用水单元_左, FlowLineType.MainProcess);
+        // 3#回用泵：从竖线Y=750高度水平向左直接连接到回用泵右边点
+        AddOrtho(new Point(中间水池连接点X, 750), 回用泵3_右, FlowLineType.MainProcess);
         
-        // 2#回用泵(右) → 至用水单元(左)：水平向左 → 垂直向下（简洁的L形）
-        AddOrtho(回用泵2_右, new Point(至用水单元_左.X, 670), FlowLineType.MainProcess);
-        AddOrtho(new Point(至用水单元_左.X, 670), 至用水单元_左, FlowLineType.MainProcess);
+        // 回用泵 → 至用水单元：优化为共享垂直线，更加整齐
+        // 从各回用泵左边点水平向左到共享垂直线X=1125，然后垂直向下分别连接到至用水单元
+        double 回用泵共享垂直线X = 1125;  // 共享垂直线的X坐标
         
-        // 3#回用泵(右) → 至用水单元(左)：水平向左直接连接（等高连接）
-        AddOrtho(回用泵3_右, 至用水单元_左, FlowLineType.MainProcess);
+        // 1#回用泵(左) → 至用水单元(右)：水平向左 → 垂直向下
+        AddOrtho(回用泵1_左, new Point(回用泵共享垂直线X, 590), FlowLineType.MainProcess);
+        AddOrtho3(new Point(回用泵共享垂直线X, 590), new Point(回用泵共享垂直线X, 750), 至用水单元_右, FlowLineType.MainProcess);
+        
+        // 2#回用泵(左) → 至用水单元(右)：水平向左 → 垂直向下
+        AddOrtho(回用泵2_左, new Point(回用泵共享垂直线X, 670), FlowLineType.MainProcess);
+        AddOrtho3(new Point(回用泵共享垂直线X, 670), new Point(回用泵共享垂直线X, 750), 至用水单元_右, FlowLineType.MainProcess);
+        
+        // 3#回用泵(左) → 至用水单元(右)：水平向左直接连接
+        AddOrtho(回用泵3_左, new Point(回用泵共享垂直线X, 750), FlowLineType.MainProcess);
+        AddOrtho(new Point(回用泵共享垂直线X, 750), 至用水单元_右, FlowLineType.MainProcess);
         
         // ========== 鼓风机连接线（黄色实线 - 曝气线）==========
         // 1#鼓风机(右) → MBR膜池(上)：水平向右 → 垂直向下
@@ -500,38 +523,47 @@ public static class FlowchartDataProvider
         // 统一中转X坐标
         double 鼓风机中转X = 820;
         
-        // 1#鼓风机 → MBR：水平向右 → 垂直向下（修改：去掉最后的水平连接，直接垂直向下）
-        AddOrtho(鼓风机1_右, new Point(855, 100), FlowLineType.Aeration);
-        AddOrtho(new Point(855, 100), MBR_上, FlowLineType.Aeration);
+        // 1#鼓风机 → MBR：水平向右 → 垂直向下（修改：连接到左边点）
+        AddOrtho(鼓风机1_右, new Point(MBR膜池_左边点.X, 100), FlowLineType.Aeration);
+        AddOrtho(new Point(MBR膜池_左边点.X, 100), MBR膜池_左边点, FlowLineType.Aeration);
         
-        // 2#鼓风机 → MBR：水平向右 → 垂直向下（修改：去掉最后的水平连接，直接垂直向下）
-        AddOrtho(鼓风机2_右, new Point(855, 180), FlowLineType.Aeration);
-        AddOrtho(new Point(855, 180), MBR_上, FlowLineType.Aeration);
+        // 2#鼓风机 → MBR：水平向右 → 垂直向下（修改：连接到左边点）
+        AddOrtho(鼓风机2_右, new Point(MBR膜池_左边点.X, 180), FlowLineType.Aeration);
+        AddOrtho(new Point(MBR膜池_左边点.X, 180), MBR膜池_左边点, FlowLineType.Aeration);
         
         // ========== 加药装置连接线（绿色虚线）==========
         // 加药装置下边点
         var 加药装置_下 = new Point(450, 250);
         // 缺氧池区域搅拌机下边点（第4列，在缺氧池上方）
-        var 缺氧池搅拌机_下 = new Point(620, 350);
+        var 缺氧池搅拌机_下 = new Point(730, 350);  // 搅拌机向右移动60像素，与鼓风机对齐
         
         // 底部绕行Y坐标（在设备下方，绕过所有中间设备）
         double 底部绕行Y = 330;
         
-        // 加药装置 → 调节池（修改：最后直接垂直向下，不需要水平折线）
-        // 从加药装置下点(450,250)垂直向下到(450,380)，然后水平向左到调节池上方(300,380)，最后垂直向下到调节池(300,420)
-        AddOrtho(加药装置_下, new Point(450, 380), FlowLineType.WaterSupply, true);
-        AddOrtho(new Point(450, 380), new Point(300, 380), FlowLineType.WaterSupply, true);
-        AddOrtho(new Point(300, 380), 调节池_右边点, FlowLineType.WaterSupply, true);
+        // 加药装置 → 调节池（修改：横线等高，以缺氧池为准Y=320）
+        // 从加药装置下点(450,250)垂直向下到(450,320)，然后水平向左到调节池上方(300,320)，最后垂直向下到调节池右边点(300,420)
+        AddOrtho(加药装置_下, new Point(450, 320), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(450, 320), new Point(300, 320), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(300, 320), 调节池_右边点, FlowLineType.WaterSupply, true);
         
-        // 加药装置 → 缺氧池（修改：最后直接垂直向下，不需要水平折线）
-        // 从加药装置下点(450,250)垂直向下到(450,400)，然后水平向右到缺氧池上方(645,400)，最后垂直向下到缺氧池(645,420)
-        AddOrtho(加药装置_下, new Point(450, 400), FlowLineType.WaterSupply, true);
-        AddOrtho(new Point(450, 400), new Point(645, 400), FlowLineType.WaterSupply, true);
-        AddOrtho(new Point(645, 400), 缺氧池_上, FlowLineType.WaterSupply, true);
+        // 加药装置 → 缺氧池（修改：横线下移30像素，连接到左边点）
+        // 从加药装置下点(450,250)垂直向下到(450,320)，然后水平向右到缺氧池上方(625,320)，最后垂直向下到缺氧池左边点(625,420)
+        AddOrtho(加药装置_下, new Point(450, 320), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(450, 320), new Point(625, 320), FlowLineType.WaterSupply, true);
+        AddOrtho(new Point(625, 320), 缺氧池_左边点, FlowLineType.WaterSupply, true);
         
-        // 缺氧池区域搅拌机 → 缺氧池（直接垂直连接，绿色虚线）
-        // 路径：搅拌机下边(620,350) → 垂直向下到Y=420 → 水平向右到缺氧池上边(645,420)
-        AddOrtho(缺氧池搅拌机_下, 缺氧池_上, FlowLineType.WaterSupply, true);
+        // 缺氧池区域搅拌机 → 缺氧池（修改：先竖线再横线再竖线向下连接到缺氧池）
+        // 路径：搅拌机下边(730,350) → 垂直向下到Y=400 → 水平向左到X=665 → 垂直向下到缺氧池右边点(665,420)
+        // 缺氧池_右边点 已在前面定义: new Point(665, 420)
+        
+        // 1. 先竖线：垂直向下
+        AddOrtho(缺氧池搅拌机_下, new Point(730, 400), FlowLineType.WaterSupply, true);
+        
+        // 2. 再横线：水平向左
+        AddOrtho(new Point(730, 400), new Point(665, 400), FlowLineType.WaterSupply, true);
+        
+        // 3. 再竖线：垂直向下直接连接到缺氧池
+        AddOrtho(new Point(665, 400), 缺氧池_右边点, FlowLineType.WaterSupply, true);
         
         // ========== 右侧加药装置连接线（绿色虚线）==========
         // 加药装置(右)下边点 → 中间水池上边点：修改为先垂直向下 → 再水平向左 → 再垂直向下
