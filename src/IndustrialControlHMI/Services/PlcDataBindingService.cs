@@ -17,7 +17,7 @@ public class PlcDataBindingService : IDisposable
     private readonly IModbusService _modbusService;
     private readonly ConcurrentDictionary<string, PlcPointMapping> _pointMappings;
     private readonly ConcurrentDictionary<string, ProcessUnitModel> _processUnits;
-    private Timer _pollingTimer;
+    private System.Timers.Timer _pollingTimer;
     private bool _isPolling;
     private readonly int _pollingInterval = 2000; // 2秒
     
@@ -82,7 +82,10 @@ public class PlcDataBindingService : IDisposable
         if (_isPolling) return;
         
         _isPolling = true;
-        _pollingTimer = new Timer(PollData, null, 0, _pollingInterval);
+        _pollingTimer = new System.Timers.Timer(_pollingInterval);
+        _pollingTimer.Elapsed += async (sender, e) => await PollData();
+        _pollingTimer.AutoReset = true;
+        _pollingTimer.Enabled = true;
     }
     
     /// <summary>
@@ -103,7 +106,7 @@ public class PlcDataBindingService : IDisposable
         await PollDataAsync();
     }
     
-    private async void PollData(object state)
+    private async Task PollData()
     {
         await PollDataAsync();
     }

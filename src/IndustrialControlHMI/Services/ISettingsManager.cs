@@ -11,12 +11,12 @@ namespace IndustrialControlHMI.Services
         /// <summary>
         /// 获取字符串配置值。
         /// </summary>
-        Task<string> GetSettingAsync(string category, string key, string defaultValue = null);
+        Task<string?> GetSettingAsync(string category, string key, string? defaultValue = null);
 
         /// <summary>
         /// 获取强类型配置值。
         /// </summary>
-        Task<T> GetSettingAsync<T>(string category, string key, T defaultValue = default);
+        Task<T?> GetSettingAsync<T>(string category, string key, T? defaultValue = default);
 
         /// <summary>
         /// 设置字符串配置值。
