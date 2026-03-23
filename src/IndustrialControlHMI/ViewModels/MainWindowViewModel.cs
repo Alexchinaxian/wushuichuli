@@ -316,12 +316,14 @@ namespace IndustrialControlHMI.ViewModels
         {
             try
             {
-                CurrentViewModel = null;
-                await Task.Delay(10);
+                var historyViewModel = _serviceProvider.GetRequiredService<HistoryDataViewModel>();
+                await historyViewModel.InitializeAsync();
+                CurrentViewModel = historyViewModel;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"导航到历史数据失败: {ex.Message}");
+                CurrentViewModel = null;
             }
         }
         

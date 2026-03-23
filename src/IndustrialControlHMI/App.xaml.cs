@@ -73,6 +73,7 @@ public partial class App : Application
         // 视图模型
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<AlarmManagementViewModel>();
+        services.AddTransient<HistoryDataViewModel>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<FlowchartViewModel>();
         services.AddTransient<CommunicationViewModel>();

@@ -13,6 +13,7 @@
         <converters:CategoryToVisibilityConverter x:Key="CategoryToVisibilityConverter" />
         <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <converters:HistoryExportFormatToDisplayConverter x:Key="HistoryExportFormatToDisplayConverter" />
         
         <!-- 按钮样式 -->
         <Style x:Key="IconButtonStyle" TargetType="Button">
@@ -240,6 +241,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:S7MonitorViewModel}">
             <views:S7MonitorView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:HistoryDataViewModel}">
+            <views:HistoryDataView/>
         </DataTemplate>
     </Application.Resources>
 </Application>

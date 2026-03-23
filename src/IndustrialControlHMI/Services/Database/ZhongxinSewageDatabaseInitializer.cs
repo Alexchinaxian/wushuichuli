@@ -110,8 +110,10 @@ public static class ZhongxinSewageDatabaseInitializer
                 existing.VariableName = m.VariableName ?? existing.VariableName;
                 existing.DataType = m.DataType ?? existing.DataType;
                 existing.Purpose = m.Purpose ?? existing.Purpose;
-                existing.UnitId = m.UnitId ?? existing.UnitId;
-                existing.EquipmentName = m.EquipmentName ?? existing.EquipmentName;
+                if (!string.IsNullOrWhiteSpace(m.UnitId))
+                    existing.UnitId = m.UnitId;
+                if (!string.IsNullOrWhiteSpace(m.EquipmentName))
+                    existing.EquipmentName = m.EquipmentName;
                 existing.EquipmentId = equipmentId ?? existing.EquipmentId;
                 existing.AlarmHigh = m.AlarmHigh ?? existing.AlarmHigh;
                 existing.AlarmLow = m.AlarmLow ?? existing.AlarmLow;
