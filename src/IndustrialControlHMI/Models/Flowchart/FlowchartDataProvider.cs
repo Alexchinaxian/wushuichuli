@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
+using IndustrialControlHMI.Infrastructure.Config;
+using IndustrialControlHMI.Services.Logging;
 
 namespace IndustrialControlHMI.Models.Flowchart;
 
@@ -22,7 +24,7 @@ public static class FlowchartDataProvider
     private const double VerticalSpacing = 150.0;
     private const double StartX = 50.0;
     private const double StartY = 150.0;
-    private static readonly string CoordinatesConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "CoordinatesConfig.json");
+    private static readonly string CoordinatesConfigPath = AppConfigPaths.GetConfigFilePath("CoordinatesConfig.json");
 
     /// <summary>
     /// 加载坐标配置文件（如果存在）
@@ -33,7 +35,7 @@ public static class FlowchartDataProvider
         {
             if (!File.Exists(CoordinatesConfigPath))
             {
-                System.Diagnostics.Debug.WriteLine($"[坐标配置] 配置文件不存在: {CoordinatesConfigPath}");
+                AppRuntimeLogger.Warn($"坐标配置文件不存在: {CoordinatesConfigPath}");
                 return null;
             }
             
@@ -42,17 +44,16 @@ public static class FlowchartDataProvider
             
             if (config == null)
             {
-                System.Diagnostics.Debug.WriteLine("[坐标配置] 配置文件反序列化失败");
+                AppRuntimeLogger.Warn("坐标配置文件反序列化失败");
                 return null;
             }
             
-            System.Diagnostics.Debug.WriteLine($"[坐标配置] 成功加载配置文件，包含 {config.Items.Count} 个配置项");
-            System.Diagnostics.Debug.WriteLine($"[坐标配置] 配置属性: AlignUnitsHorizontally={config.AlignUnitsHorizontally}, BaselineY={config.BaselineY}, Canvas={config.CanvasWidth}x{config.CanvasHeight}");
+            AppRuntimeLogger.Info($"成功加载坐标配置，项数={config.Items.Count}");
             return config;
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[坐标配置] 加载配置文件失败: {ex.Message}");
+            AppRuntimeLogger.Error("加载坐标配置文件失败", ex);
             return null;
         }
     }
@@ -62,7 +63,7 @@ public static class FlowchartDataProvider
     /// </summary>
     public static ObservableCollection<ProcessUnitModel> LoadProcessUnits()
     {
-        System.Diagnostics.Debug.WriteLine("[流程图数据] 加载硬编码设备布局...");
+        AppRuntimeLogger.Info("加载流程图硬编码设备布局");
         var units = new ObservableCollection<ProcessUnitModel>();
 
         // 辅助方法：创建设备单元
@@ -149,7 +150,7 @@ public static class FlowchartDataProvider
         AddUnit("h1sOd0kz_K9NjbGk3U_x-47", "加药装置", 1240, 290, 100, 80, "ProcessUnit");
         AddUnit("h1sOd0kz_K9NjbGk3U_x-55", "至用水单元", 1000, 710, 100, 80, "ProcessUnit", "液位", "75%");  // 改为蓝色，需要水位指示灯
 
-        System.Diagnostics.Debug.WriteLine($"[流程图数据] 总共创建单元数: {units.Count}");
+        AppRuntimeLogger.Info($"流程图处理单元创建完成，数量={units.Count}");
         return units;
     }
 
@@ -250,7 +251,7 @@ public static class FlowchartDataProvider
     /// </summary>
     public static ObservableCollection<FlowLineModel> LoadFlowLines()
     {
-        System.Diagnostics.Debug.WriteLine("[流程图数据] 加载连接线...");
+        AppRuntimeLogger.Info("加载流程图连接线");
         var lines = new ObservableCollection<FlowLineModel>();
         
         // 辅助函数：添加直角线（水平-垂直或垂直-水平）
@@ -573,7 +574,7 @@ public static class FlowchartDataProvider
         AddOrtho(new Point(1290, 400), new Point(1225, 400), FlowLineType.WaterSupply, true);
         AddOrtho(new Point(1225, 400), 中间水池_上, FlowLineType.WaterSupply, true);
         
-        System.Diagnostics.Debug.WriteLine($"[流程图数据] 连接线加载完成，共 {lines.Count} 条");
+        AppRuntimeLogger.Info($"流程图连接线加载完成，数量={lines.Count}");
         return lines;
     }
     
@@ -670,12 +671,12 @@ public static class FlowchartDataProvider
             string json = JsonSerializer.Serialize(config, options);
             File.WriteAllText(CoordinatesConfigPath, json);
             
-            System.Diagnostics.Debug.WriteLine($"[坐标配置] 成功保存配置到 {CoordinatesConfigPath}，包含 {config.Items.Count} 个配置项");
+            AppRuntimeLogger.Info($"坐标配置保存成功，路径={CoordinatesConfigPath}，项数={config.Items.Count}");
             return true;
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[坐标配置] 保存配置文件失败: {ex.Message}");
+            AppRuntimeLogger.Error("保存坐标配置文件失败", ex);
             return false;
         }
     }

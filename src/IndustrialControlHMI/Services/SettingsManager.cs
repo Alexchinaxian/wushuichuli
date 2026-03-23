@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using IndustrialControlHMI.Models;
+using IndustrialControlHMI.Services.Logging;
 
 namespace IndustrialControlHMI.Services
 {
@@ -15,12 +16,14 @@ namespace IndustrialControlHMI.Services
     public class SettingsManager : ISettingsManager
     {
         private readonly ISettingRepository _repository;
+        private readonly IAppLogger _logger;
         private readonly Dictionary<string, object> _cache = new Dictionary<string, object>();
         private readonly object _cacheLock = new object();
 
-        public SettingsManager(ISettingRepository repository)
+        public SettingsManager(ISettingRepository repository, IAppLogger logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <inheritdoc />
@@ -49,7 +52,7 @@ namespace IndustrialControlHMI.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"获取设置失败: {category}.{key}, 错误: {ex.Message}");
+                _logger.Error($"获取设置失败: {category}.{key}", ex);
                 return defaultValue;
             }
         }
@@ -118,7 +121,7 @@ namespace IndustrialControlHMI.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"获取设置失败: {category}.{key}, 类型: {typeof(T).Name}, 错误: {ex.Message}");
+                _logger.Error($"获取设置失败: {category}.{key}, 类型: {typeof(T).Name}", ex);
                 return defaultValue;
             }
         }
@@ -141,15 +144,14 @@ namespace IndustrialControlHMI.Services
 
                     // 触发设置更改事件
                     OnSettingChanged(new SettingChangedEventArgs(category, key, value));
-
-                    System.Diagnostics.Debug.WriteLine($"设置已更新: {category}.{key} = {value}");
+                    _logger.Info($"设置已更新: {category}.{key}");
                 }
 
                 return success;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"更新设置失败: {category}.{key}, 错误: {ex.Message}");
+                _logger.Error($"更新设置失败: {category}.{key}", ex);
                 return false;
             }
         }
@@ -197,12 +199,12 @@ namespace IndustrialControlHMI.Services
                     await _repository.AddAsync(setting);
                 }
 
-                System.Diagnostics.Debug.WriteLine("设置已重置为默认值");
+                _logger.Info("设置已重置为默认值");
                 return true;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"重置设置为默认值失败: {ex.Message}");
+                _logger.Error("重置设置为默认值失败", ex);
                 return false;
             }
         }
@@ -212,6 +214,7 @@ namespace IndustrialControlHMI.Services
         {
             try
             {
+                var normalizedPath = NormalizeSettingsFilePath(filePath);
                 var settings = await _repository.GetAllAsync();
 
                 var exportData = new SettingsExport
@@ -228,18 +231,18 @@ namespace IndustrialControlHMI.Services
                     }).ToList()
                 };
 
-                string extension = Path.GetExtension(filePath).ToLower();
+                string extension = Path.GetExtension(normalizedPath).ToLowerInvariant();
 
                 if (extension == ".json")
                 {
                     string json = JsonSerializer.Serialize(exportData, new JsonSerializerOptions { WriteIndented = true });
-                    await File.WriteAllTextAsync(filePath, json);
+                    await File.WriteAllTextAsync(normalizedPath, json);
                 }
                 else if (extension == ".xml")
                 {
                     // XML序列化
                     var serializer = new XmlSerializer(typeof(SettingsExport));
-                    using var writer = new StreamWriter(filePath);
+                    using var writer = new StreamWriter(normalizedPath);
                     serializer.Serialize(writer, exportData);
                 }
                 else
@@ -247,11 +250,11 @@ namespace IndustrialControlHMI.Services
                     throw new NotSupportedException($"不支持的文件格式: {extension}");
                 }
 
-                System.Diagnostics.Debug.WriteLine($"设置已导出到: {filePath}");
+                _logger.Info($"设置已导出到: {normalizedPath}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"导出设置失败: {filePath}, 错误: {ex.Message}");
+                _logger.Error($"导出设置失败: {filePath}", ex);
                 throw;
             }
         }
@@ -261,21 +264,22 @@ namespace IndustrialControlHMI.Services
         {
             try
             {
-                if (!File.Exists(filePath))
-                    throw new FileNotFoundException($"配置文件不存在: {filePath}");
+                var normalizedPath = NormalizeSettingsFilePath(filePath);
+                if (!File.Exists(normalizedPath))
+                    throw new FileNotFoundException($"配置文件不存在: {normalizedPath}");
 
                 SettingsExport importData;
-                string extension = Path.GetExtension(filePath).ToLower();
+                string extension = Path.GetExtension(normalizedPath).ToLowerInvariant();
 
                 if (extension == ".json")
                 {
-                    string json = await File.ReadAllTextAsync(filePath);
+                    string json = await File.ReadAllTextAsync(normalizedPath);
                     importData = JsonSerializer.Deserialize<SettingsExport>(json);
                 }
                 else if (extension == ".xml")
                 {
                     var serializer = new XmlSerializer(typeof(SettingsExport));
-                    using var reader = new StreamReader(filePath);
+                    using var reader = new StreamReader(normalizedPath);
                     importData = (SettingsExport)serializer.Deserialize(reader);
                 }
                 else
@@ -313,13 +317,26 @@ namespace IndustrialControlHMI.Services
                     _cache.Clear();
                 }
 
-                System.Diagnostics.Debug.WriteLine($"设置已从 {filePath} 导入");
+                _logger.Info($"设置已从 {normalizedPath} 导入");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"导入设置失败: {filePath}, 错误: {ex.Message}");
+                _logger.Error($"导入设置失败: {filePath}", ex);
                 throw;
             }
+        }
+
+        private static string NormalizeSettingsFilePath(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("文件路径不能为空。", nameof(filePath));
+
+            var fullPath = Path.GetFullPath(filePath);
+            var extension = Path.GetExtension(fullPath).ToLowerInvariant();
+            if (extension != ".json" && extension != ".xml")
+                throw new NotSupportedException($"不支持的文件格式: {extension}");
+
+            return fullPath;
         }
 
         private List<Setting> GetDefaultSettings()

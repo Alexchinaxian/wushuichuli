@@ -2,6 +2,8 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.IO;
+using IndustrialControlHMI.Infrastructure.Config;
+using IndustrialControlHMI.Services.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Ports;
 
@@ -164,14 +166,12 @@ namespace IndustrialControlHMI.Services.Communication
     public class ProtocolConfigurationService : IProtocolConfigurationService
     {
         private readonly string _configDirectory;
+        private readonly IAppLogger _logger;
         
-        public ProtocolConfigurationService()
+        public ProtocolConfigurationService(IAppLogger logger)
         {
-            _configDirectory = System.IO.Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "Config",
-                "Communication"
-            );
+            _logger = logger;
+            _configDirectory = System.IO.Path.Combine(AppConfigPaths.GetConfigDirectory(), "Communication");
             
             System.IO.Directory.CreateDirectory(_configDirectory);
         }
@@ -195,9 +195,9 @@ namespace IndustrialControlHMI.Services.Communication
                     if (config != null)
                         configurations.Add(config);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // 忽略无效的配置文件
+                    _logger.Warn($"忽略无效通信配置: {Path.GetFileName(file)}，原因: {ex.Message}");
                 }
             }
             

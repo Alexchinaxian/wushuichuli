@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using IndustrialControlHMI.Models.Flowchart;
+using IndustrialControlHMI.Services.Logging;
 
 namespace IndustrialControlHMI.Services;
 
@@ -169,7 +170,7 @@ public class FlowchartRenderer
             {
                 // 如果超出画布，可以尝试调整（但通常不会发生，因为单元位置已调整）
                 // 这里仅记录警告
-                System.Diagnostics.Debug.WriteLine($"[FlowchartRenderer] 连接线 {line.Id} 坐标超出画布范围");
+                AppRuntimeLogger.Warn($"FlowchartRenderer 连接线 {line.Id} 坐标超出画布范围");
             }
         }
     }

@@ -12,21 +12,22 @@ public class IntToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
+        bool inverse = VisibilityConverterHelper.IsInverseParameter(parameter);
         if (value is int intValue)
         {
-            return intValue > 0 ? Visibility.Visible : Visibility.Collapsed;
+            return VisibilityConverterHelper.FromInt64(intValue, inverse);
         }
         
         if (value is long longValue)
         {
-            return longValue > 0 ? Visibility.Visible : Visibility.Collapsed;
+            return VisibilityConverterHelper.FromInt64(longValue, inverse);
         }
         
-        return Visibility.Collapsed;
+        return VisibilityConverterHelper.FromInt64(0, inverse);
     }
     
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        return Binding.DoNothing;
     }
 }

@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IndustrialControlHMI.Models;
 using IndustrialControlHMI.Services;
+using IndustrialControlHMI.Services.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IndustrialControlHMI.ViewModels
@@ -20,6 +21,7 @@ namespace IndustrialControlHMI.ViewModels
         private readonly System.Timers.Timer _updateTimer;
         private readonly IModbusService _modbusService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IAppLogger _logger;
         private bool _isDisposed;
         
         // 导航相关属性
@@ -85,10 +87,11 @@ namespace IndustrialControlHMI.ViewModels
         /// <summary>
         /// 初始化主窗口视图模型。
         /// </summary>
-        public MainWindowViewModel(IModbusService modbusService, IServiceProvider serviceProvider)
+        public MainWindowViewModel(IModbusService modbusService, IServiceProvider serviceProvider, IAppLogger logger)
         {
             _modbusService = modbusService ?? throw new ArgumentNullException(nameof(modbusService));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             
             // 流程图视图模型（供主内容区 FlowchartView 绑定显示）
             FlowchartViewModel = _serviceProvider.GetRequiredService<FlowchartViewModel>();
@@ -144,8 +147,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                // 记录错误
-                System.Diagnostics.Debug.WriteLine($"主窗口视图模型初始化失败: {ex.Message}");
+                _logger.Error("主窗口视图模型初始化失败", ex);
                 // 即使连接失败也继续运行（使用模拟数据）
                 ConnectionStatus = ConnectionStatus.Disconnected;
                 ConnectionStatusColor = StatusColors.Disconnected;
@@ -285,7 +287,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"导航到仪表板失败: {ex.Message}");
+                _logger.Error("导航到仪表板失败", ex);
             }
         }
         
@@ -303,7 +305,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"导航到报警管理失败: {ex.Message}");
+                _logger.Error("导航到报警管理失败", ex);
                 CurrentViewModel = null;
             }
         }
@@ -322,7 +324,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"导航到历史数据失败: {ex.Message}");
+                _logger.Error("导航到历史数据失败", ex);
                 CurrentViewModel = null;
             }
         }
@@ -344,7 +346,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"导航到参数设置失败: {ex.Message}");
+                _logger.Error("导航到参数设置失败", ex);
                 CurrentViewModel = null;
             }
         }
@@ -363,7 +365,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"打开 S7 监控失败: {ex.Message}");
+                _logger.Error("打开 S7 监控失败", ex);
                 CurrentViewModel = null;
             }
         }

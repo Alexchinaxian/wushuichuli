@@ -12,22 +12,12 @@ public class StringToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool invert = parameter as string == "invert";
-        
-        if (value is string str)
-        {
-            bool isEmpty = string.IsNullOrEmpty(str);
-            if (invert)
-                isEmpty = !isEmpty;
-                
-            return isEmpty ? Visibility.Collapsed : Visibility.Visible;
-        }
-        
-        return invert ? Visibility.Visible : Visibility.Collapsed;
+        bool inverse = VisibilityConverterHelper.IsInverseParameter(parameter);
+        return VisibilityConverterHelper.FromString(value as string, inverse);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        return Binding.DoNothing;
     }
 }

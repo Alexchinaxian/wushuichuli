@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IndustrialControlHMI.Models;
 using IndustrialControlHMI.Services;
+using IndustrialControlHMI.Services.Logging;
 
 namespace IndustrialControlHMI.ViewModels
 {
@@ -19,6 +20,7 @@ namespace IndustrialControlHMI.ViewModels
     public partial class AlarmManagementViewModel : ObservableObject
     {
         private readonly IAlarmRepository _alarmRepository;
+        private readonly IAppLogger _logger;
 
         /// <summary>状态筛选下拉选项（与仓储状态一致：中文）。</summary>
         public static IReadOnlyList<string> StatusFilterOptions { get; } = new[] { "全部", "激活", "确认", "清除" };
@@ -61,9 +63,10 @@ namespace IndustrialControlHMI.ViewModels
         /// 初始化报警管理视图模型。
         /// </summary>
         /// <param name="alarmRepository">报警存储库。</param>
-        public AlarmManagementViewModel(IAlarmRepository alarmRepository)
+        public AlarmManagementViewModel(IAlarmRepository alarmRepository, IAppLogger logger)
         {
             _alarmRepository = alarmRepository ?? throw new ArgumentNullException(nameof(alarmRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             AlarmRecords = new ObservableCollection<AlarmRecord>();
 
             // 初始化命令
@@ -128,7 +131,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"加载报警记录失败: {ex.Message}");
+                _logger.Error("加载报警记录失败", ex);
             }
         }
 
@@ -150,7 +153,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"确认报警失败: {ex.Message}");
+                _logger.Error("确认报警失败", ex);
             }
         }
 
@@ -172,7 +175,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"解决报警失败: {ex.Message}");
+                _logger.Error("解决报警失败", ex);
             }
         }
 
@@ -194,7 +197,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"删除报警失败: {ex.Message}");
+                _logger.Error("删除报警失败", ex);
             }
         }
 
@@ -233,7 +236,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"应用筛选失败: {ex.Message}");
+                _logger.Error("应用筛选失败", ex);
             }
         }
 
@@ -288,7 +291,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"导出报警记录失败: {ex.Message}");
+                _logger.Error("导出报警记录失败", ex);
                 System.Windows.MessageBox.Show($"导出失败: {ex.Message}", "错误", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }

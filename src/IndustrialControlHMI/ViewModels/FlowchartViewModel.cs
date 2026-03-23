@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IndustrialControlHMI.Models.Flowchart;
 using IndustrialControlHMI.Services;
+using IndustrialControlHMI.Services.Logging;
 
 namespace IndustrialControlHMI.ViewModels;
 
@@ -20,6 +21,7 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
     private readonly Random _random = new Random();
     private readonly PlcDataBindingService _plcDataBindingService;
     private readonly IModbusService _modbusService;
+    private readonly IAppLogger? _logger;
     
     /// <summary>
     /// 所有处理单元的集合
@@ -146,9 +148,10 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
         }
     }
     
-    public FlowchartViewModel(IModbusService modbusService)
+    public FlowchartViewModel(IModbusService modbusService, IAppLogger logger)
     {
         _modbusService = modbusService ?? throw new ArgumentNullException(nameof(modbusService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         
         // 初始化PLC数据绑定服务
         _plcDataBindingService = new PlcDataBindingService(_modbusService);
@@ -219,15 +222,7 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
         // 注册处理单元到PLC数据绑定服务
         _plcDataBindingService.RegisterProcessUnits(ProcessUnits);
         
-        // 调试输出：显示所有处理单元的位置
-        System.Diagnostics.Debug.WriteLine("[DEBUG] FlowchartViewModel 加载的处理单元位置:");
-        foreach (var unit in ProcessUnits)
-        {
-            System.Diagnostics.Debug.WriteLine($"  {unit.Id}: Position=({unit.Position.X}, {unit.Position.Y}), Size=({unit.Size.Width}, {unit.Size.Height})");
-        }
-        
-        // 调试输出：显示连接线
-        System.Diagnostics.Debug.WriteLine("[DEBUG] FlowchartViewModel 加载的连接线数量: " + FlowLines.Count);
+        _logger?.Info($"FlowchartViewModel 已加载处理单元 {ProcessUnits.Count} 个，连接线 {FlowLines.Count} 条");
         
         // 设置初始选中单元（第一个）
         if (ProcessUnits.Count > 0)
@@ -269,8 +264,7 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
         // 触发事件，通知外部（例如主窗口）
         UnitClicked?.Invoke(this, new UnitClickedEventArgs(unit.Id, unit.Title));
         
-        // 记录到调试输出
-        System.Diagnostics.Debug.WriteLine($"[流程图] 点击了处理单元: {unit.Title} ({unit.Id})");
+        _logger?.Info($"流程图点击单元: {unit.Title} ({unit.Id})");
     }
     
     /// <summary>
@@ -283,12 +277,12 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
         if (IsAutoDemoEnabled)
         {
             _simulationTimer.Start();
-            System.Diagnostics.Debug.WriteLine("[流程图] 自动演示已启用");
+            _logger?.Info("流程图自动演示已启用");
         }
         else
         {
             _simulationTimer.Stop();
-            System.Diagnostics.Debug.WriteLine("[流程图] 自动演示已禁用");
+            _logger?.Info("流程图自动演示已禁用");
         }
     }
     
@@ -302,12 +296,12 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
         if (IsPlcBindingEnabled)
         {
             _plcDataBindingService.StartPolling();
-            System.Diagnostics.Debug.WriteLine("[流程图] PLC数据绑定已启用");
+            _logger?.Info("流程图 PLC 数据绑定已启用");
         }
         else
         {
             _plcDataBindingService.StopPolling();
-            System.Diagnostics.Debug.WriteLine("[流程图] PLC数据绑定已禁用");
+            _logger?.Info("流程图 PLC 数据绑定已禁用");
         }
     }
     
@@ -318,7 +312,7 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
     {
         if (!IsPlcConnected)
         {
-            System.Diagnostics.Debug.WriteLine("[流程图] PLC未连接，无法刷新数据");
+            _logger?.Warn("流程图 PLC 未连接，无法刷新数据");
             return;
         }
         
@@ -326,11 +320,11 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
         {
             await _plcDataBindingService.RefreshDataAsync();
             LastDataUpdateTime = DateTime.Now;
-            System.Diagnostics.Debug.WriteLine("[流程图] PLC数据已手动刷新");
+            _logger?.Info("流程图 PLC 数据已手动刷新");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[流程图] 刷新PLC数据失败: {ex.Message}");
+            _logger?.Error("流程图刷新 PLC 数据失败", ex);
         }
     }
     
@@ -350,7 +344,7 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
         
         try
         {
-            System.Diagnostics.Debug.WriteLine("[流程图] 正在连接PLC...");
+            _logger?.Info("流程图正在连接 PLC...");
             PlcConnectionStatus = "连接中...";
             
             bool connected = await _modbusService.ConnectAsync();
@@ -366,20 +360,20 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
                     _plcDataBindingService.StartPolling();
                 }
                 
-                System.Diagnostics.Debug.WriteLine("[流程图] PLC连接成功");
+                _logger?.Info("流程图 PLC 连接成功");
             }
             else
             {
                 IsPlcConnected = false;
                 PlcConnectionStatus = "连接失败";
-                System.Diagnostics.Debug.WriteLine("[流程图] PLC连接失败");
+                _logger?.Warn("流程图 PLC 连接失败");
             }
         }
         catch (Exception ex)
         {
             IsPlcConnected = false;
             PlcConnectionStatus = $"连接错误: {ex.Message}";
-            System.Diagnostics.Debug.WriteLine($"[流程图] PLC连接异常: {ex.Message}");
+            _logger?.Error("流程图 PLC 连接异常", ex);
         }
     }
     
@@ -538,18 +532,18 @@ public partial class FlowchartViewModel : ObservableObject, IDisposable
             if (success)
             {
                 SaveStatusMessage = $"位置已保存 ({DateTime.Now:HH:mm:ss})";
-                System.Diagnostics.Debug.WriteLine("[流程图] 位置保存成功");
+                _logger?.Info("流程图位置保存成功");
             }
             else
             {
                 SaveStatusMessage = "保存失败，请检查日志";
-                System.Diagnostics.Debug.WriteLine("[流程图] 位置保存失败");
+                _logger?.Warn("流程图位置保存失败");
             }
         }
         catch (Exception ex)
         {
             SaveStatusMessage = $"保存出错: {ex.Message}";
-            System.Diagnostics.Debug.WriteLine($"[流程图] 保存位置异常: {ex.Message}");
+            _logger?.Error("流程图保存位置异常", ex);
         }
         
         // 显示保存状态，3秒后自动隐藏

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
+using IndustrialControlHMI.Infrastructure.Config;
+using IndustrialControlHMI.Services.Logging;
 
 namespace IndustrialControlHMI.Models.Flowchart;
 
@@ -14,11 +16,7 @@ public static class WiringConfigLoader
 {
     private static WiringConfig? _config;
     private static readonly object _lock = new object();
-    private static readonly string ConfigPath = Path.Combine(
-        AppDomain.CurrentDomain.BaseDirectory,
-        "Config",
-        "wiring_config.json"
-    );
+    private static readonly string ConfigPath = AppConfigPaths.GetConfigFilePath("wiring_config.json");
 
     /// <summary>
     /// 获取接线配置（单例模式）
@@ -55,7 +53,7 @@ public static class WiringConfigLoader
         {
             if (!File.Exists(ConfigPath))
             {
-                System.Diagnostics.Debug.WriteLine($"[接线配置] 配置文件不存在: {ConfigPath}");
+                AppRuntimeLogger.Warn($"接线配置文件不存在: {ConfigPath}");
                 return CreateDefaultConfig();
             }
 
@@ -68,16 +66,16 @@ public static class WiringConfigLoader
 
             if (config == null)
             {
-                System.Diagnostics.Debug.WriteLine("[接线配置] 配置文件反序列化失败，使用默认配置");
+                AppRuntimeLogger.Warn("接线配置反序列化失败，使用默认配置");
                 return CreateDefaultConfig();
             }
 
-            System.Diagnostics.Debug.WriteLine($"[接线配置] 成功加载配置文件: {config.Version}");
+            AppRuntimeLogger.Info($"接线配置加载成功，版本={config.Version}");
             return config;
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[接线配置] 加载失败: {ex.Message}");
+            AppRuntimeLogger.Error("接线配置加载失败", ex);
             return CreateDefaultConfig();
         }
     }
