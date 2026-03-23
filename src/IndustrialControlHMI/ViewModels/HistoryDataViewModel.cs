@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -427,23 +428,57 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
                 return;
             }
 
-            // 通过首个点位检测“是否存在真实历史数据”
-            var hasRealData = await _pointHistoryRepository.QueryRangeAsync(mappings[0].PointMappingId, fromUtc, toUtc, takeLimit: 1);
             var unitTitleMap = await LoadUnitTitleMapAsync(mappings.Select(m => m.UnitId).Distinct());
 
+            // 性能优化：预览阶段避免 N+1 查询
+            // 一次批量拿到每个 PointMappingId 前 PreviewMaxRows 条真实历史样本
+            var distinctPointMappingIds = mappings.Select(m => m.PointMappingId).Distinct().ToList();
+            var allRealSamples = await _pointHistoryRepository.QueryRangeManyAsync(
+                distinctPointMappingIds,
+                fromUtc,
+                toUtc,
+                takeLimit: PreviewMaxRows);
+
+            var samplesByPointMappingId = allRealSamples
+                .GroupBy(s => s.PointMappingId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
             var previewRemaining = PreviewMaxRows;
+            var anyRealData = false;
+            var anySimulated = false;
+            var simPerMapping = Math.Max(1, PreviewMaxRows / Math.Max(1, mappings.Count));
+            var simTimes = BuildTimeSeries(fromUtc, toUtc, simPerMapping).ToArray();
 
-            if (hasRealData.Count == 0)
+            foreach (var mapping in mappings)
             {
-                ExportNoDataMessage = "历史数据为空：已生成模拟数据用于预览（导出同样可包含模拟数据）。";
-                var simPerMapping = Math.Max(1, PreviewMaxRows / Math.Max(1, mappings.Count));
-                var times = BuildTimeSeries(fromUtc, toUtc, simPerMapping).ToArray();
+                if (previewRemaining <= 0) break;
 
-                foreach (var mapping in mappings)
+                if (samplesByPointMappingId.TryGetValue(mapping.PointMappingId, out var samples) && samples.Count > 0)
                 {
+                    anyRealData = true;
+                    foreach (var s in samples)
+                    {
+                        PreviewRows.Add(new HistoryDataRow
+                        {
+                            TimestampLocal = s.TimestampUtc.ToLocalTime(),
+                            ProcessUnitTitle = unitTitleMap.TryGetValue(mapping.UnitId, out var title) ? title : mapping.UnitId,
+                            ParameterName = mapping.VariableName,
+                            Value = s.ValueReal,
+                            Quality = s.Quality,
+                            IsSimulated = false
+                        });
+
+                        previewRemaining--;
+                        if (previewRemaining <= 0) break;
+                    }
+                }
+                else
+                {
+                    // 该点位无真实数据：生成模拟数据
+                    anySimulated = true;
                     var seed = HashCode.Combine(mapping.VariableName, mapping.UnitId, fromUtc.Ticks, toUtc.Ticks);
                     var rnd = new Random(seed);
-                    foreach (var t in times)
+                    foreach (var t in simTimes)
                     {
                         PreviewRows.Add(new HistoryDataRow
                         {
@@ -458,39 +493,13 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
                         previewRemaining--;
                         if (previewRemaining <= 0) break;
                     }
-
-                    if (previewRemaining <= 0) break;
-                }
-                return;
-            }
-
-            // 有真实数据：逐点位查询并尽量凑满 PreviewMaxRows
-            foreach (var mapping in mappings)
-            {
-                if (previewRemaining <= 0) break;
-
-                var samples = await _pointHistoryRepository.QueryRangeAsync(
-                    mapping.PointMappingId,
-                    fromUtc,
-                    toUtc,
-                    takeLimit: previewRemaining);
-
-                foreach (var s in samples)
-                {
-                    PreviewRows.Add(new HistoryDataRow
-                    {
-                        TimestampLocal = s.TimestampUtc.ToLocalTime(),
-                        ProcessUnitTitle = unitTitleMap.TryGetValue(mapping.UnitId, out var title) ? title : mapping.UnitId,
-                        ParameterName = mapping.VariableName,
-                        Value = s.ValueReal,
-                        Quality = s.Quality,
-                        IsSimulated = false
-                    });
-
-                    previewRemaining--;
-                    if (previewRemaining <= 0) break;
                 }
             }
+
+            if (!anyRealData && anySimulated)
+                ExportNoDataMessage = "历史数据为空：已生成模拟数据用于预览（导出同样可包含模拟数据）。";
+            else if (anyRealData && anySimulated)
+                ExportNoDataMessage = "部分点位无历史数据，已对缺失点位生成模拟数据用于预览。";
         }
         finally
         {
@@ -603,26 +612,23 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
                 return;
             }
 
-            // 使用首个点位判断是否存在真实历史数据
-            var hasRealData = await _pointHistoryRepository.QueryRangeAsync(mappings[0].PointMappingId, fromUtc, toUtc, takeLimit: 1, cancellationToken: token);
-
             var unitTitleMap = await LoadUnitTitleMapAsync(mappings.Select(m => m.UnitId).Distinct());
 
             if (SelectedExportFormat == HistoryDataExportFormat.CSV)
             {
-                await ExportCsvAsync(filePath, mappings, fromUtc, toUtc, unitTitleMap, hasRealData.Count > 0, GetGbkEncoding(), token);
+                await ExportCsvAsync(filePath, mappings, fromUtc, toUtc, unitTitleMap, GetGbkEncoding(), token);
             }
             else if (SelectedExportFormat == HistoryDataExportFormat.CSVExcelAuto)
             {
-                await ExportCsvAsync(filePath, mappings, fromUtc, toUtc, unitTitleMap, hasRealData.Count > 0, GetExcelAutoCsvEncoding(), token);
+                await ExportCsvAsync(filePath, mappings, fromUtc, toUtc, unitTitleMap, GetExcelAutoCsvEncoding(), token);
             }
             else if (SelectedExportFormat == HistoryDataExportFormat.Excel)
             {
-                await ExportExcelAsync(filePath, mappings, fromUtc, toUtc, unitTitleMap, hasRealData.Count > 0, token);
+                await ExportExcelAsync(filePath, mappings, fromUtc, toUtc, unitTitleMap, token);
             }
             else
             {
-                await ExportXmlAsync(filePath, mappings, fromUtc, toUtc, unitTitleMap, hasRealData.Count > 0, token);
+                await ExportXmlAsync(filePath, mappings, fromUtc, toUtc, unitTitleMap, token);
             }
 
             // 可选压缩
@@ -672,7 +678,6 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
         DateTime fromUtc,
         DateTime toUtc,
         IDictionary<string, string> unitTitleMap,
-        bool hasRealData,
         Encoding encoding,
         CancellationToken token)
     {
@@ -688,34 +693,10 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
         var mappingCount = mappings.Count;
         var writtenRows = 0;
 
-        if (!hasRealData)
-        {
-            ExportNoDataMessage = "历史数据为空：已生成模拟数据用于导出。";
-            var simRowsPerMapping = Math.Max(1, Math.Min(ExportSimulatedMaxRowsDefault / Math.Max(1, mappingCount), MaxSamplesPerPoint));
-            var times = BuildTimeSeries(fromUtc, toUtc, simRowsPerMapping);
-
-            for (int i = 0; i < mappingCount; i++)
-            {
-                token.ThrowIfCancellationRequested();
-                var m = mappings[i];
-                var seed = HashCode.Combine(m.VariableName, m.UnitId, fromUtc.Ticks, toUtc.Ticks, "csv");
-                var rnd = new Random(seed);
-                foreach (var t in times)
-                {
-                    var value = SimulateValue(m.VariableName, rnd);
-                    var quality = 1;
-                    writer.WriteLine(
-                        $"\"{t.ToLocalTime():yyyy-MM-dd HH:mm:ss}\",\"{CsvEscape(unitTitleMap[m.UnitId])}\",\"{CsvEscape(m.VariableName)}\",\"{value}\",\"{quality}\"");
-                    writtenRows++;
-                }
-
-                ExportProgress = (i + 1) * 100 / mappingCount;
-                StatusMessage = $"模拟导出中... {ExportProgress}% 已处理 {i + 1}/{mappingCount} 个点位";
-                await writer.FlushAsync();
-            }
-
-            return;
-        }
+        var anyRealData = false;
+        var anySimulated = false;
+        var simRowsPerMapping = Math.Max(1, Math.Min(ExportSimulatedMaxRowsDefault / Math.Max(1, mappingCount), MaxSamplesPerPoint));
+        var simTimes = BuildTimeSeries(fromUtc, toUtc, simRowsPerMapping).ToArray();
 
         for (int i = 0; i < mappingCount; i++)
         {
@@ -729,17 +710,40 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
                 takeLimit: MaxSamplesPerPoint,
                 cancellationToken: token);
 
-            foreach (var s in samples)
+            if (samples.Count > 0)
             {
-                writer.WriteLine(
-                    $"\"{s.TimestampUtc.ToLocalTime():yyyy-MM-dd HH:mm:ss}\",\"{CsvEscape(unitTitleMap[m.UnitId])}\",\"{CsvEscape(m.VariableName)}\",\"{s.ValueReal}\",\"{s.Quality}\"");
-                writtenRows++;
+                anyRealData = true;
+                foreach (var s in samples)
+                {
+                    writer.WriteLine(
+                        $"\"{s.TimestampUtc.ToLocalTime():yyyy-MM-dd HH:mm:ss}\",\"{CsvEscape(unitTitleMap[m.UnitId])}\",\"{CsvEscape(m.VariableName)}\",\"{s.ValueReal.ToString(CultureInfo.InvariantCulture)}\",\"{s.Quality}\"");
+                    writtenRows++;
+                }
+            }
+            else
+            {
+                anySimulated = true;
+                var seed = HashCode.Combine(m.VariableName, m.UnitId, fromUtc.Ticks, toUtc.Ticks, "csv");
+                var rnd = new Random(seed);
+                foreach (var t in simTimes)
+                {
+                    var value = SimulateValue(m.VariableName, rnd);
+                    var quality = 1;
+                    writer.WriteLine(
+                        $"\"{t.ToLocalTime():yyyy-MM-dd HH:mm:ss}\",\"{CsvEscape(unitTitleMap[m.UnitId])}\",\"{CsvEscape(m.VariableName)}\",\"{value.ToString(CultureInfo.InvariantCulture)}\",\"{quality}\"");
+                    writtenRows++;
+                }
             }
 
             ExportProgress = (i + 1) * 100 / mappingCount;
             StatusMessage = $"正在导出... {ExportProgress}% 已写入 {writtenRows} 行";
             await writer.FlushAsync();
         }
+
+        if (!anyRealData && anySimulated)
+            ExportNoDataMessage = "历史数据为空：已生成模拟数据用于导出。";
+        else if (anyRealData && anySimulated)
+            ExportNoDataMessage = "部分点位无历史数据：已对缺失点位生成模拟数据用于导出。";
     }
 
     private async Task ExportExcelAsync(
@@ -748,7 +752,6 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
         DateTime fromUtc,
         DateTime toUtc,
         IDictionary<string, string> unitTitleMap,
-        bool hasRealData,
         CancellationToken token)
     {
         // EPPlus 许可：按非商业用途设置（可按你的实际情况调整）
@@ -771,38 +774,10 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
         var mappingCount = mappings.Count;
         var writtenRows = 0;
 
-        if (!hasRealData)
-        {
-            ExportNoDataMessage = "历史数据为空：已生成模拟数据用于导出。";
-            var simRowsPerMapping = Math.Max(1, Math.Min(ExportSimulatedMaxRowsDefault / Math.Max(1, mappingCount), MaxSamplesPerPoint));
-            var times = BuildTimeSeries(fromUtc, toUtc, simRowsPerMapping);
-
-            for (int i = 0; i < mappingCount; i++)
-            {
-                token.ThrowIfCancellationRequested();
-                var m = mappings[i];
-                var seed = HashCode.Combine(m.VariableName, m.UnitId, fromUtc.Ticks, toUtc.Ticks, "excel");
-                var rnd = new Random(seed);
-
-                foreach (var t in times)
-                {
-                    sheet.Cells[rowIndex, 1].Value = t.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
-                    sheet.Cells[rowIndex, 2].Value = unitTitleMap[m.UnitId];
-                    sheet.Cells[rowIndex, 3].Value = m.VariableName;
-                    sheet.Cells[rowIndex, 4].Value = SimulateValue(m.VariableName, rnd);
-                    sheet.Cells[rowIndex, 5].Value = 1;
-                    rowIndex++;
-                    writtenRows++;
-                }
-
-                ExportProgress = (i + 1) * 100 / mappingCount;
-                StatusMessage = $"模拟Excel导出中... {ExportProgress}% 已写入 {writtenRows} 行";
-            }
-
-            sheet.Cells.AutoFitColumns();
-            await package.SaveAsAsync(new FileInfo(filePath), token);
-            return;
-        }
+        var anyRealData = false;
+        var anySimulated = false;
+        var simRowsPerMapping = Math.Max(1, Math.Min(ExportSimulatedMaxRowsDefault / Math.Max(1, mappingCount), MaxSamplesPerPoint));
+        var simTimes = BuildTimeSeries(fromUtc, toUtc, simRowsPerMapping).ToArray();
 
         for (int i = 0; i < mappingCount; i++)
         {
@@ -816,15 +791,35 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
                 takeLimit: MaxSamplesPerPoint,
                 cancellationToken: token);
 
-            foreach (var s in samples)
+            if (samples.Count > 0)
             {
-                sheet.Cells[rowIndex, 1].Value = s.TimestampUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
-                sheet.Cells[rowIndex, 2].Value = unitTitleMap[m.UnitId];
-                sheet.Cells[rowIndex, 3].Value = m.VariableName;
-                sheet.Cells[rowIndex, 4].Value = s.ValueReal;
-                sheet.Cells[rowIndex, 5].Value = s.Quality;
-                rowIndex++;
-                writtenRows++;
+                anyRealData = true;
+                foreach (var s in samples)
+                {
+                    sheet.Cells[rowIndex, 1].Value = s.TimestampUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+                    sheet.Cells[rowIndex, 2].Value = unitTitleMap[m.UnitId];
+                    sheet.Cells[rowIndex, 3].Value = m.VariableName;
+                    sheet.Cells[rowIndex, 4].Value = s.ValueReal;
+                    sheet.Cells[rowIndex, 5].Value = s.Quality;
+                    rowIndex++;
+                    writtenRows++;
+                }
+            }
+            else
+            {
+                anySimulated = true;
+                var seed = HashCode.Combine(m.VariableName, m.UnitId, fromUtc.Ticks, toUtc.Ticks, "excel");
+                var rnd = new Random(seed);
+                foreach (var t in simTimes)
+                {
+                    sheet.Cells[rowIndex, 1].Value = t.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+                    sheet.Cells[rowIndex, 2].Value = unitTitleMap[m.UnitId];
+                    sheet.Cells[rowIndex, 3].Value = m.VariableName;
+                    sheet.Cells[rowIndex, 4].Value = SimulateValue(m.VariableName, rnd);
+                    sheet.Cells[rowIndex, 5].Value = 1;
+                    rowIndex++;
+                    writtenRows++;
+                }
             }
 
             ExportProgress = (i + 1) * 100 / mappingCount;
@@ -833,6 +828,11 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
 
         sheet.Cells.AutoFitColumns();
         await package.SaveAsAsync(new FileInfo(filePath), token);
+
+        if (!anyRealData && anySimulated)
+            ExportNoDataMessage = "历史数据为空：已生成模拟数据用于导出。";
+        else if (anyRealData && anySimulated)
+            ExportNoDataMessage = "部分点位无历史数据：已对缺失点位生成模拟数据用于导出。";
     }
 
     private async Task ExportXmlAsync(
@@ -841,11 +841,8 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
         DateTime fromUtc,
         DateTime toUtc,
         IDictionary<string, string> unitTitleMap,
-        bool hasRealData,
         CancellationToken token)
     {
-        ExportNoDataMessage = !hasRealData ? "历史数据为空：已生成模拟数据用于导出。" : string.Empty;
-
         var root = new XElement("WasteWaterHistoryExport",
             new XAttribute("generatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
             new XAttribute("dataType", SelectedDataType),
@@ -853,6 +850,11 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
             new XAttribute("to", FilterEndDate.ToString("yyyy-MM-dd HH:mm:ss")));
 
         int mappingCount = mappings.Count;
+        var anyRealData = false;
+        var anySimulated = false;
+        var simRowsPerMapping = Math.Max(1, Math.Min(ExportSimulatedMaxRowsDefault / Math.Max(1, mappingCount), MaxSamplesPerPoint));
+        var simTimes = BuildTimeSeries(fromUtc, toUtc, simRowsPerMapping).ToArray();
+
         for (int i = 0; i < mappingCount; i++)
         {
             token.ThrowIfCancellationRequested();
@@ -860,33 +862,33 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
             var unitTitle = unitTitleMap.TryGetValue(m.UnitId, out var title) ? title : m.UnitId;
 
             IEnumerable<PointHistorySampleLike> rows;
-            if (!hasRealData)
-            {
-                var simRowsPerMapping = Math.Max(1, Math.Min(ExportSimulatedMaxRowsDefault / Math.Max(1, mappingCount), MaxSamplesPerPoint));
-                var times = BuildTimeSeries(fromUtc, toUtc, simRowsPerMapping);
-                var seed = HashCode.Combine(m.VariableName, m.UnitId, fromUtc.Ticks, toUtc.Ticks, "xml");
-                var rnd = new Random(seed);
-                rows = times.Select(t => new PointHistorySampleLike
-                {
-                    TimestampUtc = t,
-                    Value = SimulateValue(m.VariableName, rnd),
-                    Quality = (byte)1
-                }).ToArray();
-            }
-            else
-            {
-                var samples = await _pointHistoryRepository.QueryRangeAsync(
-                    m.PointMappingId,
-                    fromUtc,
-                    toUtc,
-                    takeLimit: MaxSamplesPerPoint,
-                    cancellationToken: token);
+            var samples = await _pointHistoryRepository.QueryRangeAsync(
+                m.PointMappingId,
+                fromUtc,
+                toUtc,
+                takeLimit: MaxSamplesPerPoint,
+                cancellationToken: token);
 
+            if (samples.Count > 0)
+            {
+                anyRealData = true;
                 rows = samples.Select(s => new PointHistorySampleLike
                 {
                     TimestampUtc = s.TimestampUtc,
                     Value = s.ValueReal,
                     Quality = s.Quality
+                }).ToArray();
+            }
+            else
+            {
+                anySimulated = true;
+                var seed = HashCode.Combine(m.VariableName, m.UnitId, fromUtc.Ticks, toUtc.Ticks, "xml");
+                var rnd = new Random(seed);
+                rows = simTimes.Select(t => new PointHistorySampleLike
+                {
+                    TimestampUtc = t,
+                    Value = SimulateValue(m.VariableName, rnd),
+                    Quality = (byte)1
                 }).ToArray();
             }
 
@@ -896,7 +898,7 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
                     new XAttribute("timeLocal", r.TimestampUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")),
                     new XAttribute("unit", unitTitle),
                     new XAttribute("parameter", m.VariableName),
-                    new XAttribute("value", r.Value),
+                    new XAttribute("value", r.Value.ToString(CultureInfo.InvariantCulture)),
                     new XAttribute("quality", r.Quality)));
             }
 
@@ -918,6 +920,11 @@ public partial class HistoryDataViewModel : ObservableObject, IDisposable
             using var writer = System.Xml.XmlWriter.Create(filePath, settings);
             doc.Save(writer);
         }, token);
+
+        if (!anyRealData && anySimulated)
+            ExportNoDataMessage = "历史数据为空：已生成模拟数据用于导出。";
+        else if (anyRealData && anySimulated)
+            ExportNoDataMessage = "部分点位无历史数据：已对缺失点位生成模拟数据用于导出。";
     }
 
     private sealed class PointHistorySampleLike

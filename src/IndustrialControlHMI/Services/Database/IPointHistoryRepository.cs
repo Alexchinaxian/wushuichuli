@@ -18,4 +18,14 @@ public interface IPointHistoryRepository
         System.DateTime toUtc,
         int takeLimit = 50000,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 批量查询：对每个 pointMappingId 按 TimestampUtc 升序取前 takeLimit 条。
+    /// </summary>
+    Task<IReadOnlyList<PointHistorySample>> QueryRangeManyAsync(
+        IReadOnlyList<long> pointMappingIds,
+        System.DateTime fromUtc,
+        System.DateTime toUtc,
+        int takeLimit = 50000,
+        CancellationToken cancellationToken = default);
 }
