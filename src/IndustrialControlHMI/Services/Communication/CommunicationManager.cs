@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading.Tasks;
+using IndustrialControlHMI.Infrastructure.Config;
+using IndustrialControlHMI.Services.Logging;
 using Microsoft.Extensions.Configuration;
 
 namespace IndustrialControlHMI.Services.Communication
@@ -15,8 +17,20 @@ namespace IndustrialControlHMI.Services.Communication
     /// </summary>
     public class CommunicationManager : ICommunicationManager
     {
+        private sealed class ProtocolRuntimeStats
+        {
+            public long TotalBytesSent;
+            public long TotalBytesReceived;
+            public int TotalErrors;
+            public DateTime LastActivity = DateTime.Now;
+            public DateTime? ConnectedAt;
+        }
+
         private readonly ConcurrentDictionary<string, ProtocolBase> _protocols;
+        private readonly ConcurrentDictionary<string, ProtocolRuntimeStats> _stats;
         private readonly IConfiguration _configuration;
+        private readonly IAppLogger _logger;
+        private readonly IProtocolFactory _protocolFactory;
         private readonly string _configDirectory;
         
         /// <summary>
@@ -29,15 +43,14 @@ namespace IndustrialControlHMI.Services.Communication
         /// </summary>
         public event EventHandler<CommunicationDataReceivedEventArgs> DataReceived;
         
-        public CommunicationManager(IConfiguration configuration)
+        public CommunicationManager(IConfiguration configuration, IAppLogger logger, IProtocolFactory protocolFactory)
         {
             _protocols = new ConcurrentDictionary<string, ProtocolBase>();
+            _stats = new ConcurrentDictionary<string, ProtocolRuntimeStats>();
             _configuration = configuration;
-            _configDirectory = System.IO.Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory, 
-                "Config", 
-                "Communication"
-            );
+            _logger = logger;
+            _protocolFactory = protocolFactory;
+            _configDirectory = Path.Combine(AppConfigPaths.GetConfigDirectory(), "Communication");
             
             // 确保配置目录存在
             System.IO.Directory.CreateDirectory(_configDirectory);
@@ -57,7 +70,16 @@ namespace IndustrialControlHMI.Services.Communication
             if (protocol == null)
                 throw new ArgumentNullException(nameof(protocol));
             
-            return _protocols.TryAdd(protocolId, protocol);
+            var added = _protocols.TryAdd(protocolId, protocol);
+            if (added)
+            {
+                _stats.TryAdd(protocolId, new ProtocolRuntimeStats());
+                protocol.ConnectionStatusChanged += OnProtocolConnectionStatusChanged;
+                protocol.DataReceived += OnProtocolDataReceived;
+                protocol.ErrorOccurred += OnProtocolErrorOccurred;
+            }
+
+            return added;
         }
         
         /// <summary>
@@ -67,6 +89,10 @@ namespace IndustrialControlHMI.Services.Communication
         {
             if (_protocols.TryRemove(protocolId, out var protocol))
             {
+                _stats.TryRemove(protocolId, out _);
+                protocol.ConnectionStatusChanged -= OnProtocolConnectionStatusChanged;
+                protocol.DataReceived -= OnProtocolDataReceived;
+                protocol.ErrorOccurred -= OnProtocolErrorOccurred;
                 protocol.Dispose();
                 return true;
             }
@@ -257,7 +283,8 @@ namespace IndustrialControlHMI.Services.Communication
         {
             try
             {
-                var filePath = System.IO.Path.Combine(_configDirectory, $"{protocolId}.json");
+                var normalizedId = NormalizeProtocolId(protocolId);
+                var filePath = Path.Combine(_configDirectory, $"{normalizedId}.json");
                 var json = System.Text.Json.JsonSerializer.Serialize(config, new System.Text.Json.JsonSerializerOptions
                 {
                     WriteIndented = true
@@ -284,7 +311,8 @@ namespace IndustrialControlHMI.Services.Communication
         {
             try
             {
-                var filePath = System.IO.Path.Combine(_configDirectory, $"{protocolId}.json");
+                var normalizedId = NormalizeProtocolId(protocolId);
+                var filePath = Path.Combine(_configDirectory, $"{normalizedId}.json");
                 
                 if (!System.IO.File.Exists(filePath))
                     return null;
@@ -310,15 +338,19 @@ namespace IndustrialControlHMI.Services.Communication
         /// </summary>
         public CommunicationStatistics GetStatistics(string protocolId)
         {
-            // 这里可以添加实际的统计逻辑
+            var stats = _stats.GetOrAdd(protocolId, _ => new ProtocolRuntimeStats());
+            var connectionTime = stats.ConnectedAt.HasValue
+                ? DateTime.Now - stats.ConnectedAt.Value
+                : TimeSpan.Zero;
+
             return new CommunicationStatistics
             {
                 ProtocolId = protocolId,
-                TotalBytesSent = 0,
-                TotalBytesReceived = 0,
-                TotalErrors = 0,
-                ConnectionTime = TimeSpan.Zero,
-                LastActivity = DateTime.Now
+                TotalBytesSent = stats.TotalBytesSent,
+                TotalBytesReceived = stats.TotalBytesReceived,
+                TotalErrors = stats.TotalErrors,
+                ConnectionTime = connectionTime,
+                LastActivity = stats.LastActivity
             };
         }
         
@@ -327,11 +359,27 @@ namespace IndustrialControlHMI.Services.Communication
         /// </summary>
         private void LoadConfiguration()
         {
-            // 从配置文件加载协议配置
-            var protocolsSection = _configuration.GetSection("Communication:Protocols");
-            if (protocolsSection.Exists())
+            var files = Directory.Exists(_configDirectory)
+                ? Directory.GetFiles(_configDirectory, "*.json")
+                : Array.Empty<string>();
+
+            foreach (var file in files)
             {
-                // 这里可以添加自动创建协议实例的逻辑
+                try
+                {
+                    var json = File.ReadAllText(file);
+                    var config = JsonSerializer.Deserialize<ProtocolConfiguration>(json);
+                    if (config == null || string.IsNullOrWhiteSpace(config.ProtocolId))
+                        continue;
+
+                    var protocol = _protocolFactory.CreateProtocol(config);
+                    RegisterProtocol(config.ProtocolId, protocol);
+                    _logger.Info($"自动加载通信协议配置: {config.ProtocolId} ({config.ProtocolType})");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn($"跳过无效通信配置文件: {Path.GetFileName(file)}，原因: {ex.Message}");
+                }
             }
         }
         
@@ -356,7 +404,97 @@ namespace IndustrialControlHMI.Services.Communication
         /// </summary>
         protected virtual void OnErrorOccurred(CommunicationErrorEventArgs e)
         {
-            // 这里可以添加错误日志记录
+            var stats = _stats.GetOrAdd(e.ProtocolId, _ => new ProtocolRuntimeStats());
+            stats.TotalErrors++;
+            stats.LastActivity = e.Timestamp;
+
+            var message = $"通信错误 [{e.ProtocolId}] {e.ErrorMessage}";
+            if (e.Severity == ErrorSeverity.Warning)
+                _logger.Warn(message);
+            else
+                _logger.Error(message, e.Exception);
+
+            CommunicationStatusChanged?.Invoke(this, new CommunicationStatusChangedEventArgs
+            {
+                ProtocolId = e.ProtocolId,
+                IsConnected = false,
+                Message = e.ErrorMessage,
+                Timestamp = e.Timestamp
+            });
+        }
+
+        private void OnProtocolConnectionStatusChanged(object? sender, ConnectionStatusChangedEventArgs e)
+        {
+            var protocolId = FindProtocolId(sender as ProtocolBase);
+            var stats = _stats.GetOrAdd(protocolId, _ => new ProtocolRuntimeStats());
+            stats.LastActivity = e.Timestamp;
+            stats.ConnectedAt = e.IsConnected ? e.Timestamp : null;
+            OnCommunicationStatusChanged(new CommunicationStatusChangedEventArgs
+            {
+                ProtocolId = protocolId,
+                IsConnected = e.IsConnected,
+                Message = e.Message,
+                Timestamp = e.Timestamp
+            });
+        }
+
+        private void OnProtocolDataReceived(object? sender, DataReceivedEventArgs e)
+        {
+            var protocolId = FindProtocolId(sender as ProtocolBase);
+            var stats = _stats.GetOrAdd(protocolId, _ => new ProtocolRuntimeStats());
+            if (e.Source == "Sent")
+                stats.TotalBytesSent += e.RawData?.Length ?? 0;
+            else
+                stats.TotalBytesReceived += e.RawData?.Length ?? 0;
+            stats.LastActivity = e.Timestamp;
+            OnDataReceived(new CommunicationDataReceivedEventArgs
+            {
+                ProtocolId = protocolId,
+                RawData = e.RawData,
+                Direction = e.Source == "Sent" ? DataDirection.Sent : DataDirection.Received,
+                Timestamp = e.Timestamp
+            });
+        }
+
+        private void OnProtocolErrorOccurred(object? sender, ErrorOccurredEventArgs e)
+        {
+            var protocolId = FindProtocolId(sender as ProtocolBase);
+            OnErrorOccurred(new CommunicationErrorEventArgs
+            {
+                ProtocolId = protocolId,
+                ErrorMessage = e.ErrorMessage,
+                Exception = e.Exception,
+                Severity = e.Severity,
+                Timestamp = e.Timestamp
+            });
+        }
+
+        private string FindProtocolId(ProtocolBase? protocol)
+        {
+            if (protocol == null)
+                return string.Empty;
+
+            foreach (var pair in _protocols)
+            {
+                if (ReferenceEquals(pair.Value, protocol))
+                    return pair.Key;
+            }
+
+            return string.Empty;
+        }
+
+        private static string NormalizeProtocolId(string protocolId)
+        {
+            if (string.IsNullOrWhiteSpace(protocolId))
+                throw new ArgumentException("协议ID不能为空。", nameof(protocolId));
+
+            var trimmed = protocolId.Trim();
+            if (trimmed.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                throw new ArgumentException("协议ID包含非法文件名字符。", nameof(protocolId));
+            if (trimmed.Contains("..", StringComparison.Ordinal))
+                throw new ArgumentException("协议ID不允许包含目录上跳。", nameof(protocolId));
+
+            return trimmed;
         }
         
         /// <summary>

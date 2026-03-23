@@ -1,7 +1,8 @@
 using System;
-using System.Diagnostics;
 using System.Windows;
+using IndustrialControlHMI.Services.Logging;
 using IndustrialControlHMI.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IndustrialControlHMI;
 
@@ -27,7 +28,8 @@ public partial class MainWindow : Window
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"主窗口初始化失败: {ex.Message}");
+                var logger = (Application.Current as App)?.ServiceProvider.GetService<IAppLogger>();
+                logger?.Error("主窗口初始化失败", ex);
             }
         }
     }

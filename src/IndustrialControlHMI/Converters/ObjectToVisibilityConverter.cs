@@ -12,14 +12,15 @@ public class ObjectToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool isNull = value == null;
-        bool inverse = string.Equals(parameter as string, "Inverse", StringComparison.OrdinalIgnoreCase);
-        bool visible = inverse ? !isNull : isNull;
-        return visible ? Visibility.Visible : Visibility.Collapsed;
+        var inverse = VisibilityConverterHelper.IsInverseParameter(parameter);
+        // 兼容现有语义：默认“对象为 null 时可见”，传 inverse 则反转。
+        var isNullVisible = value == null;
+        if (inverse) isNullVisible = !isNullVisible;
+        return isNullVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        return Binding.DoNothing;
     }
 }

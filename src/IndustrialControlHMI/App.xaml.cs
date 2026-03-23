@@ -4,6 +4,7 @@ using IndustrialControlHMI.Infrastructure;
 using IndustrialControlHMI.Services;
 using IndustrialControlHMI.Services.Communication;
 using IndustrialControlHMI.Services.Database;
+using IndustrialControlHMI.Services.Logging;
 using IndustrialControlHMI.Services.S7;
 using IndustrialControlHMI.ViewModels;
 
@@ -49,8 +50,11 @@ public partial class App : Application
     /// <param name="services">服务集合。</param>
     private void ConfigureServices(IServiceCollection services)
     {
+        services.AddLogging();
+
         // 配置管理
         services.AddSingleton<IConfigurationManager, ConfigurationManager>();
+        services.AddSingleton<IAppLogger, AppLogger>();
         
         // Modbus配置
         services.AddSingleton<IModbusConfig, DefaultModbusConfig>();

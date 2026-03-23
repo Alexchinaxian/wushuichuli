@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IndustrialControlHMI.Models;
 using IndustrialControlHMI.Services;
+using IndustrialControlHMI.Services.Logging;
 
 namespace IndustrialControlHMI.ViewModels
 {
@@ -16,6 +17,7 @@ namespace IndustrialControlHMI.ViewModels
     {
         private readonly ISettingsManager _settingsManager;
         private readonly IModbusService _modbusService;
+        private readonly IAppLogger _logger;
         private bool _isDisposed;
 
         // 配置分类
@@ -84,10 +86,11 @@ namespace IndustrialControlHMI.ViewModels
         /// <summary>
         /// 初始化设置视图模型。
         /// </summary>
-        public SettingsViewModel(ISettingsManager settingsManager, IModbusService modbusService)
+        public SettingsViewModel(ISettingsManager settingsManager, IModbusService modbusService, IAppLogger logger)
         {
             _settingsManager = settingsManager ?? throw new ArgumentNullException(nameof(settingsManager));
             _modbusService = modbusService ?? throw new ArgumentNullException(nameof(modbusService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             InitializeCategories();
             _ = LoadSettingsAsync();
@@ -173,7 +176,7 @@ namespace IndustrialControlHMI.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"加载配置失败: {ex.Message}";
-                System.Diagnostics.Debug.WriteLine($"加载配置失败: {ex.Message}");
+                _logger.Error("加载配置失败", ex);
             }
             finally
             {
@@ -232,7 +235,7 @@ namespace IndustrialControlHMI.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"保存配置失败: {ex.Message}";
-                System.Diagnostics.Debug.WriteLine($"保存配置失败: {ex.Message}");
+                _logger.Error("保存配置失败", ex);
             }
             finally
             {
@@ -255,7 +258,7 @@ namespace IndustrialControlHMI.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"重置配置失败: {ex.Message}";
-                System.Diagnostics.Debug.WriteLine($"重置配置失败: {ex.Message}");
+                _logger.Error("重置配置失败", ex);
             }
         }
 
@@ -276,7 +279,7 @@ namespace IndustrialControlHMI.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"连接测试异常: {ex.Message}";
-                System.Diagnostics.Debug.WriteLine($"Modbus连接测试失败: {ex.Message}");
+                _logger.Error("Modbus连接测试失败", ex);
             }
         }
 
@@ -314,7 +317,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"加载报警阈值失败: {ex.Message}");
+                _logger.Error("加载报警阈值失败", ex);
             }
         }
 
@@ -335,7 +338,7 @@ namespace IndustrialControlHMI.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"保存报警阈值失败: {ex.Message}");
+                _logger.Error("保存报警阈值失败", ex);
                 throw;
             }
         }

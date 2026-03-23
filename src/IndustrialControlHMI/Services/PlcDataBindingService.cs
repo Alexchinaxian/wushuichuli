@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using IndustrialControlHMI.Models.Flowchart;
+using IndustrialControlHMI.Services.Logging;
 
 namespace IndustrialControlHMI.Services;
 
@@ -399,12 +400,7 @@ public class PlcDataBindingService : IDisposable
     
     protected virtual void OnErrorOccurred(string errorMessage, Exception exception = null)
     {
-        // 可以记录错误日志或触发事件
-        System.Diagnostics.Debug.WriteLine($"[PLC数据绑定服务] 错误: {errorMessage}");
-        if (exception != null)
-        {
-            System.Diagnostics.Debug.WriteLine($"[PLC数据绑定服务] 异常: {exception}");
-        }
+        AppRuntimeLogger.Error($"PLC数据绑定服务错误: {errorMessage}", exception);
     }
     
     public void Dispose()

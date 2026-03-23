@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using IndustrialControlHMI.Infrastructure.Config;
+using IndustrialControlHMI.Services.Logging;
 using Microsoft.Extensions.Configuration;
 
 namespace IndustrialControlHMI.Services;
@@ -13,22 +15,20 @@ public class ConfigurationManager : IConfigurationManager
 {
     private readonly IConfiguration _configuration;
     private readonly string _configDirectory;
+    private readonly IAppLogger _logger;
+    private FileSystemWatcher? _configWatcher;
     
     /// <summary>
     /// 配置变更事件
     /// </summary>
-    public event EventHandler<ConfigurationChangedEventArgs> ConfigurationChanged;
+    public event EventHandler<ConfigurationChangedEventArgs>? ConfigurationChanged;
     
-    public ConfigurationManager()
+    public ConfigurationManager(IAppLogger logger)
     {
-        // 配置目录：项目根目录下的config文件夹
-        _configDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config");
-        
-        // 确保配置目录存在
-        if (!Directory.Exists(_configDirectory))
-        {
-            Directory.CreateDirectory(_configDirectory);
-        }
+        _logger = logger;
+        // 配置目录优先读取环境变量 INDUSTRIAL_HMI_CONFIG_DIR，否则使用应用目录下 Config
+        _configDirectory = AppConfigPaths.GetConfigDirectory();
+        EnsureDefaultConfigFiles();
         
         // 构建配置
         _configuration = new ConfigurationBuilder()
@@ -104,7 +104,8 @@ public class ConfigurationManager : IConfigurationManager
     {
         try
         {
-            var filePath = Path.Combine(_configDirectory, configName);
+            var safeFileName = NormalizeConfigFileName(configName);
+            var filePath = Path.Combine(_configDirectory, safeFileName);
             var json = JsonSerializer.Serialize(configuration, new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -116,7 +117,7 @@ public class ConfigurationManager : IConfigurationManager
             // 触发配置变更事件
             OnConfigurationChanged(new ConfigurationChangedEventArgs
             {
-                ConfigName = configName,
+                ConfigName = safeFileName,
                 ChangeType = ConfigurationChangeType.Updated
             });
         }
@@ -133,11 +134,12 @@ public class ConfigurationManager : IConfigurationManager
     {
         try
         {
-            var filePath = Path.Combine(_configDirectory, configName);
+            var safeFileName = NormalizeConfigFileName(configName);
+            var filePath = Path.Combine(_configDirectory, safeFileName);
             
             if (!File.Exists(filePath))
             {
-                throw new FileNotFoundException($"配置文件不存在: {configName}", filePath);
+                throw new FileNotFoundException($"配置文件不存在: {safeFileName}", filePath);
             }
             
             var json = await File.ReadAllTextAsync(filePath);
@@ -154,9 +156,23 @@ public class ConfigurationManager : IConfigurationManager
     /// </summary>
     public bool ValidateConfiguration<T>(T configuration)
     {
-        // 这里可以添加具体的验证逻辑
-        // 例如：检查必填字段、范围验证等
-        return configuration != null;
+        if (configuration == null)
+            return false;
+
+        // 仅对已知配置类型做最小校验，避免错误配置进入运行时。
+        if (configuration is ModbusConfiguration modbus)
+        {
+            if (string.IsNullOrWhiteSpace(modbus.IpAddress))
+                return false;
+            if (modbus.Port <= 0 || modbus.Port > 65535)
+                return false;
+            if (modbus.SlaveId <= 0 || modbus.SlaveId > 247)
+                return false;
+            if (modbus.Timeout <= 0 || modbus.RetryCount < 0)
+                return false;
+        }
+
+        return true;
     }
     
     /// <summary>
@@ -174,8 +190,64 @@ public class ConfigurationManager : IConfigurationManager
     
     private void SetupConfigurationChangeHandlers()
     {
-        // 这里可以添加配置变更的监听逻辑
-        // 例如：当配置文件被修改时重新加载
+        _configWatcher?.Dispose();
+        _configWatcher = new FileSystemWatcher(_configDirectory, "*.json")
+        {
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.CreationTime
+        };
+
+        _configWatcher.Changed += (_, e) => RaiseConfigChanged(e);
+        _configWatcher.Created += (_, e) => RaiseConfigChanged(e);
+        _configWatcher.Deleted += (_, e) => RaiseConfigChanged(e);
+        _configWatcher.Renamed += (_, e) => RaiseConfigChanged(e);
+        _configWatcher.EnableRaisingEvents = true;
+    }
+
+    private void RaiseConfigChanged(FileSystemEventArgs e)
+    {
+        var changeType = e.ChangeType switch
+        {
+            WatcherChangeTypes.Created => ConfigurationChangeType.Created,
+            WatcherChangeTypes.Deleted => ConfigurationChangeType.Deleted,
+            _ => ConfigurationChangeType.Updated
+        };
+
+        OnConfigurationChanged(new ConfigurationChangedEventArgs
+        {
+            ConfigName = Path.GetFileName(e.FullPath),
+            ChangeType = changeType
+        });
+    }
+
+    private void EnsureDefaultConfigFiles()
+    {
+        EnsureJsonFile("appsettings.json", "{}");
+        EnsureJsonFile("CoordinatesConfig.json", "{\"version\":\"1.0\",\"items\":[],\"flowLines\":[]}");
+        EnsureJsonFile("wiring_config.json", "{\"version\":\"1.0\",\"connectionPoints\":{},\"wiringRules\":[]}");
+    }
+
+    private void EnsureJsonFile(string fileName, string defaultJson)
+    {
+        var path = Path.Combine(_configDirectory, NormalizeConfigFileName(fileName));
+        if (File.Exists(path))
+            return;
+
+        File.WriteAllText(path, defaultJson);
+        _logger.Info($"已创建默认配置文件: {path}");
+    }
+
+    private static string NormalizeConfigFileName(string configName)
+    {
+        if (string.IsNullOrWhiteSpace(configName))
+            throw new ArgumentException("配置文件名不能为空。", nameof(configName));
+
+        var fileName = Path.GetFileName(configName.Trim());
+        if (!fileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("仅支持 .json 配置文件。", nameof(configName));
+        if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            throw new ArgumentException("配置文件名包含非法字符。", nameof(configName));
+
+        return fileName;
     }
     
     private void OnConfigurationChanged(ConfigurationChangedEventArgs e)

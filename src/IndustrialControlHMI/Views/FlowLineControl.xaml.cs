@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using IndustrialControlHMI.Models.Flowchart;
+using IndustrialControlHMI.Services.Logging;
 
 namespace IndustrialControlHMI.Views
 {
@@ -33,7 +34,7 @@ namespace IndustrialControlHMI.Views
         
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"[FlowLineControl] Loaded, FlowLineModel={(FlowLineModel?.Id ?? "null")}");
+            AppRuntimeLogger.Info($"FlowLineControl loaded, model={FlowLineModel?.Id ?? "null"}");
             UpdateLine();
         }
 
@@ -54,7 +55,7 @@ namespace IndustrialControlHMI.Views
             // 验证起点和终点是否有效
             if (!IsValidPoint(m.Start) || !IsValidPoint(m.End))
             {
-                System.Diagnostics.Debug.WriteLine($"[FlowLineControl] 跳过无效线条: {m.Id}");
+                AppRuntimeLogger.Warn($"FlowLineControl 跳过无效线条: {m.Id}");
                 LinePath.Visibility = Visibility.Collapsed;
                 if (ArrowPath != null) ArrowPath.Visibility = Visibility.Collapsed;
                 return;
@@ -67,16 +68,16 @@ namespace IndustrialControlHMI.Views
             LinePath.StrokeDashOffset = m.AnimationOffset;
 
             // 根据是否为直角线选择绘制方式
-            System.Diagnostics.Debug.WriteLine($"[FlowLineControl] Line {m.Id}: IsOrthogonal={m.IsOrthogonal}, Start=({m.Start.X:F0},{m.Start.Y:F0}), End=({m.End.X:F0},{m.End.Y:F0}), IntermediatePoints={m.IntermediatePoints.Count}");
+            AppRuntimeLogger.Info($"FlowLineControl line={m.Id}, orthogonal={m.IsOrthogonal}, points={m.IntermediatePoints.Count}");
             
             if (m.IsOrthogonal)
             {
-                System.Diagnostics.Debug.WriteLine($"[FlowLineControl] 绘制直角线: {m.Id}");
+                AppRuntimeLogger.Info($"FlowLineControl 绘制直角线: {m.Id}");
                 DrawOrthogonalLine(m);
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine($"[FlowLineControl] 绘制斜线: {m.Id}");
+                AppRuntimeLogger.Info($"FlowLineControl 绘制斜线: {m.Id}");
                 DrawDiagonalLine(m);
             }
 
@@ -103,7 +104,7 @@ namespace IndustrialControlHMI.Views
         private void DrawOrthogonalLine(FlowLineModel m)
         {
             var points = m.GetPathPoints();
-            System.Diagnostics.Debug.WriteLine($"[DrawOrthogonalLine] 初始点数: {points.Count}");
+            AppRuntimeLogger.Info($"DrawOrthogonalLine 初始点数: {points.Count}");
             
             if (points.Count < 2)
             {
@@ -130,7 +131,7 @@ namespace IndustrialControlHMI.Views
                     midPoint = new Point(midX, start.Y);
                     points.Insert(1, midPoint);
                     points.Insert(2, new Point(midX, end.Y));
-                    System.Diagnostics.Debug.WriteLine($"[DrawOrthogonalLine] 水平优先: 添加中间点 ({midX:F0},{start.Y:F0}) 和 ({midX:F0},{end.Y:F0})");
+                    AppRuntimeLogger.Info("DrawOrthogonalLine 水平优先添加中间点");
                 }
                 else
                 {
@@ -138,11 +139,11 @@ namespace IndustrialControlHMI.Views
                     midPoint = new Point(start.X, midY);
                     points.Insert(1, midPoint);
                     points.Insert(2, new Point(end.X, midY));
-                    System.Diagnostics.Debug.WriteLine($"[DrawOrthogonalLine] 垂直优先: 添加中间点 ({start.X:F0},{midY:F0}) 和 ({end.X:F0},{midY:F0})");
+                    AppRuntimeLogger.Info("DrawOrthogonalLine 垂直优先添加中间点");
                 }
             }
             
-            System.Diagnostics.Debug.WriteLine($"[DrawOrthogonalLine] 最终点数: {points.Count}");
+            AppRuntimeLogger.Info($"DrawOrthogonalLine 最终点数: {points.Count}");
             
             // 创建路径几何
             var pathGeometry = new PathGeometry();
