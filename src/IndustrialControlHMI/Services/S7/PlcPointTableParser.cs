@@ -52,6 +52,7 @@ public static class PlcPointTableParser
             var dataType = cols.Length > 2 ? cols[2].Trim() : "INTEGER";
 
             var purpose = ClassifyPurpose(registerAddress, variableName);
+            var unitId = ClassifyUnitId(variableName);
 
             list.Add(new PlcPointMapping
             {
@@ -59,7 +60,7 @@ public static class PlcPointTableParser
                 VariableName = variableName,
                 RegisterAddress = registerAddress,
                 DataType = dataType,
-                UnitId = string.Empty,
+                UnitId = unitId ?? string.Empty,
                 EquipmentName = string.Empty,
                 Purpose = purpose
             });
@@ -90,6 +91,34 @@ public static class PlcPointTableParser
         }
 
         return "通用";
+    }
+
+    private static string? ClassifyUnitId(string variableName)
+    {
+        if (string.IsNullOrWhiteSpace(variableName))
+            return null;
+
+        var v = variableName;
+
+        // 依据点位变量名的常见命名，粗粒度归类到流程单元（用于“处理单元(多选)”筛选）。
+        if (v.Contains("调节池", StringComparison.OrdinalIgnoreCase))
+            return "regulating-tank";
+        if (v.Contains("MBR膜池", StringComparison.OrdinalIgnoreCase) || v.Contains("MBR", StringComparison.OrdinalIgnoreCase))
+            return "mbr-tank";
+        if (v.Contains("中间水池", StringComparison.OrdinalIgnoreCase) || v.Contains("中水池", StringComparison.OrdinalIgnoreCase))
+            return "intermediate-tank";
+        if (v.Contains("缺氧池", StringComparison.OrdinalIgnoreCase))
+            return "anoxic-tank";
+        if (v.Contains("碳源", StringComparison.OrdinalIgnoreCase))
+            return "dosing-1";
+        if (v.Contains("格栅机", StringComparison.OrdinalIgnoreCase))
+            return "bar-screen";
+
+        // 产水泵/电磁流量计通常在同一段工艺里展示
+        if (v.Contains("产水泵", StringComparison.OrdinalIgnoreCase) || v.Contains("电磁流量计", StringComparison.OrdinalIgnoreCase))
+            return "production-pump";
+
+        return null;
     }
 
     /// <summary>
